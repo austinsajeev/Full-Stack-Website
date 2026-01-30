@@ -1,0 +1,952 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Eden Food Products | Premium Semi-Cooked Staples</title>
+  <meta name="description"
+    content="Authentic semi-cooked South-Indian staples. Chapatti, Poori, Parotta & more. Delivered fresh in Bengaluru." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Outfit', 'sans-serif'] },
+          colors: {
+            eden: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .glass {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+    }
+
+    .hide {
+      display: none !important;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #10b981;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #059669;
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 antialiased selection:bg-eden-100 selection:text-eden-900">
+
+  <!-- Navbar -->
+  <nav class="fixed w-full z-50 transition-all duration-300 glass border-b border-gray-100" id="navbar">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-20">
+        <!-- Logo -->
+        <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo(0,0)">
+          <img src="images/logo.jpg" alt="Eden Foods" class="h-10 w-auto rounded-lg">
+          <span class="font-bold text-xl tracking-tight text-gray-900">Eden<span
+              class="text-eden-600">Foods</span></span>
+        </div>
+
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex items-center gap-8 font-medium text-gray-600">
+          <a href="#products" class="hover:text-eden-600 transition">Menu</a>
+          <a href="#howitworks" class="hover:text-eden-600 transition">Process</a>
+          <a href="#bulk" class="hover:text-eden-600 transition">Bulk</a>
+          <a href="#founders" class="hover:text-eden-600 transition">Story</a>
+          <button id="navCartBtn" class="relative p-2 hover:bg-gray-100 rounded-full transition group">
+            <svg class="w-6 h-6 text-gray-700 group-hover:text-eden-600" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+            </svg>
+            <span id="navCartCount"
+              class="absolute top-0 right-0 bg-eden-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-sm">0</span>
+          </button>
+          <button onclick="document.getElementById('products').scrollIntoView()"
+            class="bg-eden-600 hover:bg-eden-700 text-white px-6 py-2.5 rounded-full font-medium transition shadow-lg shadow-eden-200 transform hover:-translate-y-0.5">
+            Order Now
+          </button>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <div class="md:hidden">
+          <button id="mobileMenuBtn" class="p-2 text-gray-600">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Mobile Menu Container -->
+    <div id="mobileMenu" class="md:hidden glass border-t border-gray-100 hide">
+      <div class="px-4 pt-2 pb-6 space-y-2">
+        <a href="#products"
+          class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-eden-600 hover:bg-eden-50 rounded-lg transition"
+          onclick="$('#mobileMenu').classList.add('hide')">Menu</a>
+        <a href="#howitworks"
+          class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-eden-600 hover:bg-eden-50 rounded-lg transition"
+          onclick="$('#mobileMenu').classList.add('hide')">Process</a>
+        <a href="#bulk"
+          class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-eden-600 hover:bg-eden-50 rounded-lg transition"
+          onclick="$('#mobileMenu').classList.add('hide')">Bulk</a>
+        <a href="#founders"
+          class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-eden-600 hover:bg-eden-50 rounded-lg transition"
+          onclick="$('#mobileMenu').classList.add('hide')">Story</a>
+      </div>
+    </div>
+  </nav>
+  <!-- Mobile Menu -->
+  <section class="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div class="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
+      <div class="flex-1 text-center md:text-left space-y-6 fade-in">
+        <div
+          class="inline-block bg-eden-50 text-eden-700 px-4 py-1.5 rounded-full text-sm font-semibold tracking-wide uppercase mb-2">
+          Fresh from Bengaluru
+        </div>
+        <h1 class="text-4xl md:text-6xl font-bold text-gray-900 leading-tight">
+          Authentic Taste,<br>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-eden-600 to-eden-400">Ready in
+            Minutes.</span>
+        </h1>
+        <p class="text-lg text-gray-600 leading-relaxed max-w-xl mx-auto md:mx-0">
+          Premium semi-cooked chapatti, poori, and parotta. Handcrafted with care, hygienically packed, and delivered
+          to
+          your doorstep. Just heat and serve.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start pt-4">
+          <a href="#products"
+            class="bg-eden-600 text-white px-8 py-3.5 rounded-full font-semibold shadow-xl shadow-eden-200 hover:bg-eden-700 transition transform hover:-translate-y-1">
+            Browse Menu
+          </a>
+          <a href="#howitworks"
+            class="bg-white text-gray-700 border border-gray-200 px-8 py-3.5 rounded-full font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-2">
+            <span class="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center text-xs">▶</span> How it
+            Works
+          </a>
+        </div>
+        <div class="pt-6 flex items-center justify-center md:justify-start gap-8 text-sm text-gray-500 font-medium">
+          <div class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-eden-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            No Preservatives
+          </div>
+          <div class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-eden-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            Homely Taste
+          </div>
+        </div>
+      </div>
+      <div class="flex-1 relative fade-in" style="animation-delay: 0.2s;">
+        <div class="absolute inset-0 bg-eden-200 rounded-full filter blur-3xl opacity-20 animate-pulse"></div>
+        <img src="images/HERO.png" alt="Delicious Semi-Cooked Food"
+          class="relative w-full rounded-2xl shadow-2xl transform rotate-2 hover:rotate-0 transition duration-500 object-cover h-[400px] md:h-[500px]">
+      </div>
+    </div>
+  </section>
+
+  <!-- Products Section -->
+  <section id="products" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <h2 class="text-3xl font-bold text-gray-900">Our Signature Menu</h2>
+        <p class="mt-4 text-gray-600">Choose from our range of freshly prepared semi-cooked staples.</p>
+      </div>
+
+      <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <!-- Products will be injected here -->
+        <div class="col-span-full text-center py-12 text-gray-500">Loading products...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Delivery Check -->
+  <section class="py-16 bg-eden-50">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Do we deliver to you?</h2>
+      <div class="bg-white p-2 rounded-full shadow-lg flex flex-col sm:flex-row gap-2 max-w-lg mx-auto">
+        <input id="deliveryInput" type="text" placeholder="Enter Area or Pincode (e.g. 560073)"
+          class="flex-1 px-6 py-3 rounded-full outline-none text-gray-700 placeholder-gray-400">
+        <button id="deliveryCheckBtn"
+          class="bg-gray-900 text-white px-8 py-3 rounded-full font-medium hover:bg-gray-800 transition">Check</button>
+      </div>
+      <div class="mt-4 flex justify-center gap-3 text-sm">
+        <span class="text-gray-500">Popular:</span>
+        <button class="presetBtn hover:text-eden-600 underline decoration-dotted">Nagasandra</button>
+        <button class="presetBtn hover:text-eden-600 underline decoration-dotted">Kengeri</button>
+        <button class="presetBtn hover:text-eden-600 underline decoration-dotted">Yeshwanthpur</button>
+      </div>
+      <div id="deliveryResult" class="mt-6 min-h-[60px]"></div>
+    </div>
+  </section>
+
+  <!-- Recipes Section -->
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-gray-900">Quick Recipes</h2>
+        <p class="mt-2 text-gray-600">Tasty dishes you can make with our staples in minutes.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-gray-50 rounded-2xl overflow-hidden group hover:shadow-xl transition">
+          <div class="h-48 overflow-hidden">
+            <img src="images/kothuu.png" alt="Kothu Parotta"
+              class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+          </div>
+          <div class="p-6">
+            <h3 class="font-bold text-xl mb-2">Spicy Kothu Parotta</h3>
+            <p class="text-sm text-gray-600 mb-4">Shredded parotta stir-fried with eggs, onions, and salna spices.</p>
+            <span class="text-eden-600 font-bold text-sm">⏱️ 10 mins</span>
+          </div>
+        </div>
+        <div class="bg-gray-50 rounded-2xl overflow-hidden group hover:shadow-xl transition">
+          <div class="h-48 overflow-hidden">
+            <img src="images/roll.png" alt="Paneer Roll"
+              class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+          </div>
+          <div class="p-6">
+            <h3 class="font-bold text-xl mb-2">Paneer Kati Roll</h3>
+            <p class="text-sm text-gray-600 mb-4">Wrap spicy paneer chilli in our semi-cooked wheat chapattis.</p>
+            <span class="text-eden-600 font-bold text-sm">⏱️ 8 mins</span>
+          </div>
+        </div>
+        <div class="bg-gray-50 rounded-2xl overflow-hidden group hover:shadow-xl transition">
+          <div class="h-48 overflow-hidden">
+            <img src="images/masala.png" alt="Masala Poori"
+              class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+          </div>
+          <div class="p-6">
+            <h3 class="font-bold text-xl mb-2">Masala Poori Chat</h3>
+            <p class="text-sm text-gray-600 mb-4">Crispy pooris crushed and topped with peas masala and sev.</p>
+            <span class="text-eden-600 font-bold text-sm">⏱️ 15 mins</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section id="howitworks" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-gray-900">Simple 3-Step Process</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+        <div class="text-center group">
+          <div
+            class="w-20 h-20 bg-eden-50 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-eden-100 transition">
+            <span class="text-3xl">🛒</span>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">1. Order Online</h3>
+          <p class="text-gray-600">Select your favorites and place an order in seconds.</p>
+        </div>
+        <div class="text-center group">
+          <div
+            class="w-20 h-20 bg-eden-50 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-eden-100 transition">
+            <span class="text-3xl">🚚</span>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">2. Fast Delivery</h3>
+          <p class="text-gray-600">We deliver fresh, semi-cooked packs to your door.</p>
+        </div>
+        <div class="text-center group">
+          <div
+            class="w-20 h-20 bg-eden-50 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-eden-100 transition">
+            <span class="text-3xl">🍳</span>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">3. Heat & Eat</h3>
+          <p class="text-gray-600">Just heat on a tawa for 2 mins and enjoy!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="py-20 bg-eden-50">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-gray-900">Loved by Families</h2>
+        <div class="flex justify-center gap-1 mt-4 text-yellow-400">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+        <p class="mt-2 text-gray-600">Rated 4.8/5 by happy customers in Bengaluru.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-white p-8 rounded-2xl shadow-sm border border-eden-100">
+          <p class="text-gray-600 italic mb-6">"The chapattis are so soft! It saves me an hour every morning. My kids
+            love the poori too."</p>
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 bg-eden-200 rounded-full flex items-center justify-center font-bold text-eden-700">A
+            </div>
+            <div>
+              <div class="font-bold text-gray-900">Anjali R.</div>
+              <div class="text-xs text-gray-500">Kengeri</div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white p-8 rounded-2xl shadow-sm border border-eden-100">
+          <p class="text-gray-600 italic mb-6">"Finally authentic Kerala parotta in Bangalore. Tastes exactly like home.
+            Highly recommended!"</p>
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 bg-blue-200 rounded-full flex items-center justify-center font-bold text-blue-700">T
+            </div>
+            <div>
+              <div class="font-bold text-gray-900">Thomas K.</div>
+              <div class="text-xs text-gray-500">HMT Layout</div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white p-8 rounded-2xl shadow-sm border border-eden-100">
+          <p class="text-gray-600 italic mb-6">"Ordered bulk chapattis for a family function. Quality was consistent and
+            delivery was on time."</p>
+          <div class="flex items-center gap-4">
+            <div
+              class="w-10 h-10 bg-purple-200 rounded-full flex items-center justify-center font-bold text-purple-700">P
+            </div>
+            <div>
+              <div class="font-bold text-gray-900">Priya S.</div>
+              <div class="text-xs text-gray-500">Yeshwanthpur</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bulk & Subscriptions -->
+  <section id="bulk" class="py-20 bg-gray-900 text-white">
+    <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-16 items-center">
+      <div>
+        <h2 class="text-3xl font-bold mb-6">Partner with Eden</h2>
+        <p class="text-gray-400 mb-8 text-lg">Running a hostel, canteen, or event? We provide bulk supplies at
+          unbeatable rates. Or subscribe for monthly home deliveries.</p>
+
+        <div class="space-y-4">
+          <div class="flex gap-4">
+            <div
+              class="w-12 h-12 bg-gray-800 rounded-lg flex items-center justify-center text-eden-400 font-bold text-xl">
+              B</div>
+            <div>
+              <h4 class="font-semibold text-lg">Bulk Orders</h4>
+              <p class="text-gray-400 text-sm">Custom quantities for large requirements.</p>
+            </div>
+          </div>
+          <div class="flex gap-4">
+            <div
+              class="w-12 h-12 bg-gray-800 rounded-lg flex items-center justify-center text-eden-400 font-bold text-xl">
+              S</div>
+            <div>
+              <h4 class="font-semibold text-lg">Subscriptions</h4>
+              <p class="text-gray-400 text-sm">Weekly or monthly plans for families.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white text-gray-800 p-8 rounded-2xl shadow-2xl">
+        <h3 class="text-xl font-bold mb-6">Request Bulk / Subscription</h3>
+        <form id="bulkForm" class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <input name="company" placeholder="Name / Company"
+              class="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 w-full outline-none focus:border-eden-500 transition"
+              required />
+            <input name="phone" placeholder="Phone Number"
+              class="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 w-full outline-none focus:border-eden-500 transition"
+              required />
+          </div>
+          <select name="type"
+            class="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 w-full outline-none focus:border-eden-500 transition">
+            <option value="bulk">Bulk Order Inquiry</option>
+            <option value="subscription">Subscription Inquiry</option>
+          </select>
+          <textarea name="message" placeholder="Tell us your requirements..." rows="3"
+            class="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 w-full outline-none focus:border-eden-500 transition"></textarea>
+          <button type="submit"
+            class="w-full bg-eden-600 text-white font-semibold py-3 rounded-lg hover:bg-eden-700 transition">Send
+            Request</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Founders -->
+  <section id="founders" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold text-gray-900 mb-12">Meet the Founders</h2>
+      <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div class="p-8 rounded-2xl bg-gray-50 hover:bg-white hover:shadow-xl transition border border-gray-100">
+          <div class="w-24 h-24 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl">👩‍💼
+          </div>
+          <h3 class="text-xl font-bold">Mrs. Sibi Mol K</h3>
+          <p class="text-eden-600 font-medium text-sm mb-4">Co-Founder</p>
+          <p class="text-gray-600 text-sm">Championing women entrepreneurship and bringing homely taste to every
+            household in Bengaluru.</p>
+        </div>
+        <div class="p-8 rounded-2xl bg-gray-50 hover:bg-white hover:shadow-xl transition border border-gray-100">
+          <div class="w-24 h-24 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl">👩‍💼
+          </div>
+          <h3 class="text-xl font-bold">Mrs. Shoba Mathew</h3>
+          <p class="text-eden-600 font-medium text-sm mb-4">Co-Founder</p>
+          <p class="text-gray-600 text-sm">Focused on quality, tradition, and community-driven food services.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="py-20 bg-eden-50">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-gray-900">Frequently Asked Questions</h2>
+      </div>
+      <div class="space-y-4">
+        <details class="group bg-white rounded-2xl shadow-sm border border-eden-100 open:ring-2 open:ring-eden-100">
+          <summary class="flex justify-between items-center p-6 font-medium cursor-pointer list-none">
+            <span>How long do the chapattis last?</span>
+            <span class="transition group-open:rotate-180">▼</span>
+          </summary>
+          <div class="text-gray-600 px-6 pb-6">
+            Our products are fresh and contain no preservatives. Best consumed within 2-3 days if refrigerated.
+          </div>
+        </details>
+        <details class="group bg-white rounded-2xl shadow-sm border border-eden-100 open:ring-2 open:ring-eden-100">
+          <summary class="flex justify-between items-center p-6 font-medium cursor-pointer list-none">
+            <span>Do you deliver every day?</span>
+            <span class="transition group-open:rotate-180">▼</span>
+          </summary>
+          <div class="text-gray-600 px-6 pb-6">
+            Yes! We deliver between 7 AM and 7 PM daily. Orders placed before 12 PM get same-day delivery.
+          </div>
+        </details>
+        <details class="group bg-white rounded-2xl shadow-sm border border-eden-100 open:ring-2 open:ring-eden-100">
+          <summary class="flex justify-between items-center p-6 font-medium cursor-pointer list-none">
+            <span>Are there any preservatives added?</span>
+            <span class="transition group-open:rotate-180">▼</span>
+          </summary>
+          <div class="text-gray-600 px-6 pb-6">
+            Absolutely not. We stick to traditional recipes using only whole wheat flour, water, salt, and oil.
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-400 py-12 border-t border-gray-800" id="contact">
+    <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-8 items-start">
+      <div class="text-center md:text-left">
+        <div class="text-white font-bold text-xl mb-2">Eden Foods</div>
+        <p class="text-sm mb-4">Authentic Semi-Cooked Staples.</p>
+        <div class="space-y-1 text-sm text-gray-500">
+          <p>No.21A 10th Main, 2nd Cross Rd, Next to SVV Convent School</p>
+          <p>1st Block, HMT Layout, Rukmini Nagar</p>
+          <p>Bengaluru, Karnataka 560073</p>
+          <p class="pt-2 font-medium text-eden-500">📞 082172 18618</p>
+        </div>
+      </div>
+      <div class="flex flex-col md:items-end gap-2 text-sm">
+        <div class="flex gap-6">
+          <a href="#" class="hover:text-white transition">Privacy</a>
+          <a href="#" class="hover:text-white transition">Terms</a>
+        </div>
+        <div class="text-sm">© <span id="year"></span> Eden Food Products</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Notification -->
+  <div id="toast"
+    class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-2xl z-[100] transition-all duration-300 hide translate-y-[-100px]">
+    <div id="toastMsg" class="font-medium"></div>
+  </div>
+
+  <!-- Floating Cart -->
+  <div id="floatingCart" class="fixed right-6 bottom-6 z-40 hide fade-in">
+    <div class="bg-white p-6 rounded-2xl shadow-2xl w-80 border border-gray-100">
+      <div class="flex items-center justify-between mb-4 border-b pb-2">
+        <div class="font-bold text-lg">Your Cart</div>
+        <button id="closeCart" class="text-gray-400 hover:text-gray-600">✕</button>
+      </div>
+      <div id="cartItems" class="max-h-60 overflow-y-auto space-y-3 mb-4 text-sm"></div>
+      <div class="flex justify-between font-bold text-lg mb-4">
+        <span>Total</span>
+        <span>₹<span id="cartTotal">0</span></span>
+      </div>
+      <button id="checkoutBtn"
+        class="w-full bg-eden-600 text-white py-3 rounded-xl font-semibold hover:bg-eden-700 transition shadow-lg shadow-eden-100">Checkout</button>
+    </div>
+  </div>
+
+  <!-- Checkout Modal -->
+  <div id="checkoutModal"
+    class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] hide flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl w-full max-w-md p-8 shadow-2xl fade-in">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-2xl font-bold">Checkout</h3>
+        <button id="closeCheckout" class="text-gray-400 hover:text-gray-600 text-xl">✕</button>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="mb-6 bg-gray-50 p-4 rounded-xl">
+        <div class="text-sm font-semibold text-gray-500 mb-2">Order Summary</div>
+        <div id="checkoutSummary" class="text-sm space-y-1 max-h-32 overflow-y-auto"></div>
+        <div class="border-t border-gray-200 mt-2 pt-2 flex justify-between font-bold">
+          <span>Total</span>
+          <span>₹<span id="checkoutTotal">0</span></span>
+        </div>
+      </div>
+
+      <form id="checkoutForm" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+          <input name="name"
+            class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 outline-none focus:border-eden-500 transition"
+            required />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+          <input name="phone"
+            class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 outline-none focus:border-eden-500 transition"
+            required />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Delivery Address</label>
+          <textarea name="address" rows="2"
+            class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 outline-none focus:border-eden-500 transition"
+            required></textarea>
+        </div>
+        <div class="pt-2">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Payment Method</label>
+          <div class="grid grid-cols-2 gap-3">
+            <label class="border rounded-lg p-3 flex items-center gap-2 cursor-pointer hover:bg-gray-50 transition">
+              <input type="radio" name="payment" value="cod" checked class="text-eden-600 focus:ring-eden-500">
+              <span class="text-sm font-medium">Cash on Delivery</span>
+            </label>
+            <label class="border rounded-lg p-3 flex items-center gap-2 cursor-pointer hover:bg-gray-50 transition">
+              <input type="radio" name="payment" value="online" class="text-eden-600 focus:ring-eden-500">
+              <span class="text-sm font-medium">Online (Simulated)</span>
+            </label>
+          </div>
+        </div>
+
+        <button type="submit"
+          class="w-full bg-eden-600 text-white font-bold py-3 rounded-xl hover:bg-eden-700 transition shadow-lg shadow-eden-100 mt-4">
+          Confirm Order
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // --- Config ---
+    try {
+      console.log('Script Starting...');
+    } catch (e) { }
+
+    const API_BASE = 'http://localhost:3000/api';
+    let PRODUCTS = [];
+    let CART = JSON.parse(localStorage.getItem('eden_cart') || '[]');
+
+    // --- DOM Elements ---
+    const $ = (sel) => document.querySelector(sel);
+    const $all = (sel) => document.querySelectorAll(sel);
+
+    // --- Utilities ---
+    function showToast(msg) {
+      const t = $('#toast');
+      $('#toastMsg').textContent = msg;
+      t.classList.remove('hide');
+      t.classList.remove('translate-y-[-100px]');
+      setTimeout(() => {
+        t.classList.add('translate-y-[-100px]'); // simple animation logic
+        setTimeout(() => t.classList.add('hide'), 300);
+      }, 3000);
+    }
+
+    function saveCart() {
+      localStorage.setItem('eden_cart', JSON.stringify(CART));
+      updateCartUI();
+    }
+
+    // --- Core Logic ---
+    async function init() {
+      // Load Products
+      try {
+        const res = await fetch(`${API_BASE}/products`);
+        PRODUCTS = await res.json();
+        renderProducts();
+      } catch (e) {
+        $('#productsGrid').innerHTML = '<div class="col-span-full text-center text-red-500">Failed to load products. Is server running?</div>';
+      }
+
+      updateCartUI();
+      $('#year').textContent = new Date().getFullYear();
+    }
+
+    function renderProducts() {
+      const grid = $('#productsGrid');
+      grid.innerHTML = '';
+      PRODUCTS.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'bg-white p-6 rounded-2xl shadow-sm hover:shadow-xl transition duration-300 border border-gray-100 flex flex-col group';
+        // Initial price is first variant's price
+        const initialPrice = p.variants[0].price;
+        const isStock = p.inStock !== false; // Default to true if undefined
+
+        card.innerHTML = `
+          <div class="h-48 bg-gray-100 rounded-xl mb-4 overflow-hidden relative">
+            <img src="${p.image || 'https://placehold.co/400x300?text=No+Image'}" 
+                 alt="${p.name}" 
+                 class="w-full h-full object-cover group-hover:scale-110 transition duration-500 ${isStock ? '' : 'grayscale opacity-50'}"
+                 onerror="this.src='https://placehold.co/400x300?text=Error'">
+            ${!isStock ? '<div class="absolute inset-0 flex items-center justify-center bg-black/10"><span class="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">Out of Stock</span></div>' : ''}
+          </div>
+          <h3 class="text-lg font-bold text-gray-900 mb-1 group-hover:text-eden-600 transition">${p.name}</h3>
+          <p class="text-sm text-gray-500 mb-4 flex-1">${p.desc}</p>
+          
+          <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
+            <div class="font-bold text-xl text-gray-900">₹<span class="priceDisplay">${initialPrice}</span></div>
+            <div class="flex gap-2">
+              <select class="variantSelect bg-gray-50 border-none text-sm rounded-lg px-2 py-1 outline-none cursor-pointer hover:bg-gray-100" 
+                      onchange="updateCardPrice(this)" ${!isStock ? 'disabled' : ''}>
+                ${p.variants.map(v => `<option value="${v.name}" data-price="${v.price}">${v.name}</option>`).join('')}
+              </select>
+              ${isStock ? `
+              <button class="addBtn bg-eden-600 text-white w-8 h-8 rounded-lg flex items-center justify-center hover:bg-eden-700 transition shadow-lg shadow-eden-100" data-id="${p.id}">
+                +
+              </button>` : `
+              <button class="bg-gray-200 text-gray-400 w-8 h-8 rounded-lg flex items-center justify-center cursor-not-allowed" disabled>
+                ✕
+              </button>`}
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // Helper to update price on selection
+    window.updateCardPrice = (select) => {
+      const price = select.options[select.selectedIndex].dataset.price;
+      const card = select.closest('.group');
+      card.querySelector('.priceDisplay').textContent = price;
+    };
+
+    function updateCartUI() {
+      const count = CART.reduce((s, i) => s + i.qty, 0);
+      const total = CART.reduce((s, i) => s + i.price * i.qty, 0);
+
+      $('#navCartCount').textContent = count;
+      $('#cartTotal').textContent = total;
+
+      const items = $('#cartItems');
+      items.innerHTML = '';
+
+      if (CART.length === 0) {
+        items.innerHTML = '<div class="text-center text-gray-400 py-4">Your cart is empty</div>';
+        $('#floatingCart').classList.add('hide');
+      }
+
+      CART.forEach((it, idx) => {
+        const div = document.createElement('div');
+        div.className = 'flex items-center gap-3 bg-gray-50 p-3 rounded-xl';
+        div.innerHTML = `
+          <div class="flex-1">
+            <div class="font-medium text-gray-900 line-clamp-1">${it.name}</div>
+            <div class="text-xs text-gray-500">${it.variant}</div>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="text-sm font-bold">₹${it.price * it.qty}</div>
+            <button class="text-red-400 hover:text-red-600 p-1" onclick="removeCart(${idx})">×</button>
+          </div>
+        `;
+        items.appendChild(div);
+      });
+    }
+
+    function addToCart(id, variantName) {
+      const p = PRODUCTS.find(x => x.id == id);
+      if (!p) return;
+
+      // Find specific variant object to get its price
+      const variantObj = p.variants.find(v => v.name === variantName);
+      if (!variantObj) return;
+
+      const existing = CART.find(i => i.id === p.id && i.variant === variantName);
+      if (existing) existing.qty++;
+      else CART.push({ id: p.id, name: p.name, price: variantObj.price, variant: variantName, qty: 1 });
+
+      saveCart();
+      showToast('Added to cart');
+      $('#floatingCart').classList.remove('hide'); // Auto show on add
+    }
+
+    window.removeCart = (idx) => {
+      CART.splice(idx, 1);
+      saveCart();
+    };
+
+    // --- Event Listeners ---
+    document.addEventListener('DOMContentLoaded', init);
+
+    // Helper to toggle Scroll Lock
+    const toggleScrollLock = () => document.body.classList.toggle('overflow-hidden');
+
+    // Mobile Menu
+    $('#mobileMenuBtn').addEventListener('click', () => {
+      $('#mobileMenu').classList.toggle('hide');
+    });
+
+    // Product Grid Actions
+    $('#productsGrid').addEventListener('click', (e) => {
+      const btn = e.target.closest('.addBtn');
+      if (btn) {
+        const id = btn.dataset.id;
+        const card = btn.closest('.group');
+        const variant = card.querySelector('.variantSelect').value;
+        addToCart(id, variant);
+      }
+    });
+
+
+    // Cart Toggles
+    $('#navCartBtn').addEventListener('click', () => {
+      $('#floatingCart').classList.toggle('hide');
+    });
+    $('#closeCart').addEventListener('click', () => {
+      $('#floatingCart').classList.add('hide');
+    });
+
+    // Checkout
+    $('#checkoutBtn').addEventListener('click', () => {
+      if (CART.length === 0) return showToast('Cart is empty');
+      renderCheckoutSummary();
+      $('#floatingCart').classList.add('hide');
+      $('#checkoutModal').classList.remove('hide');
+      document.body.classList.add('overflow-hidden'); // Lock Scroll
+    });
+    $('#closeCheckout').addEventListener('click', () => {
+      $('#checkoutModal').classList.add('hide');
+      document.body.classList.remove('overflow-hidden'); // Unlock Scroll
+    });
+
+    function renderCheckoutSummary() {
+      const el = $('#checkoutSummary');
+      const totalEl = $('#checkoutTotal');
+      el.innerHTML = '';
+      let total = 0;
+      CART.forEach(item => {
+        const itemTotal = item.price * item.qty;
+        total += itemTotal;
+        const div = document.createElement('div');
+        div.className = 'flex justify-between';
+        div.innerHTML = `<span>${item.qty}x ${item.name} <span class="text-xs text-gray-500">(${item.variant})</span></span> <span>₹${itemTotal}</span>`;
+        el.appendChild(div);
+      });
+      totalEl.textContent = total;
+    }
+
+    // Checkout Submit
+    $('#checkoutForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const customer = Object.fromEntries(fd.entries());
+      const totalAmount = CART.reduce((s, i) => s + i.price * i.qty, 0);
+
+      const placeOrder = async (paymentDetails = {}) => {
+        const payload = {
+          customer,
+          items: CART,
+          total: totalAmount,
+          paymentMethod: customer.payment,
+          paymentDetails
+        };
+
+        try {
+          const res = await fetch(`${API_BASE}/orders`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          const data = await res.json();
+          if (data.success) {
+            CART = [];
+            saveCart();
+            $('#checkoutModal').classList.add('hide');
+            showToast('Order Placed! ID: ' + data.orderId);
+          } else {
+            showToast('Failed to place order');
+          }
+        } catch (err) {
+          showToast('Server error');
+        }
+      };
+
+      if (customer.payment === 'online') {
+        // Razorpay Integration
+        const options = {
+          "key": "rzp_test_YOUR_KEY_HERE", // Enter your Test Key ID generated from Dashboard
+          "amount": totalAmount * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+          "currency": "INR",
+          "name": "Eden Food Products",
+          "description": "Payment for Order",
+          "image": "https://dummyimage.com/128x128/10b981/fff?text=E", // Logo
+          "handler": function (response) {
+            // On Success
+            console.log(response.razorpay_payment_id);
+            placeOrder({
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature
+            });
+          },
+          "prefill": {
+            "name": customer.name,
+            "contact": customer.phone
+          },
+          "theme": {
+            "color": "#10b981"
+          },
+          "modal": {
+            "ondismiss": function () {
+              showToast('Payment Cancelled');
+            }
+          }
+        };
+
+        try {
+          const rzp1 = new Razorpay(options);
+          rzp1.on('payment.failed', function (response) {
+            showToast('Payment Failed: ' + response.error.description);
+          });
+          rzp1.open();
+        } catch (e) {
+          console.error(e);
+          showToast('Razorpay Error. Check SDK.');
+        }
+
+      } else {
+        // Cash on Delivery
+        placeOrder();
+      }
+    });
+
+    // Delivery Check
+    $('#deliveryCheckBtn').addEventListener('click', async () => {
+      const loc = $('#deliveryInput').value;
+      if (!loc) return showToast('Enter location');
+
+      try {
+        const res = await fetch(`${API_BASE}/delivery-check`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ location: loc })
+        });
+        const r = await res.json();
+        $('#deliveryResult').innerHTML = `
+          <div class="p-4 rounded-xl ${r.serviceable ? 'bg-eden-50 text-eden-800 border border-eden-200' : 'bg-red-50 text-red-800 border border-red-200'} flex items-center gap-3">
+             <div class="text-2xl">${r.serviceable ? '✅' : '❌'}</div>
+             <div>
+               <div class="font-bold">${r.serviceable ? 'We deliver here!' : 'Not serviceable yet'}</div>
+               <div class="text-sm opacity-80">Distance: ${r.distanceKm}km • ETA: ${r.eta} mins</div>
+             </div>
+          </div>
+        `;
+      } catch (e) {
+        showToast('Error checking delivery');
+      }
+    });
+
+    // Presets
+    $all('.presetBtn').forEach(b => {
+      b.addEventListener('click', () => {
+        $('#deliveryInput').value = b.textContent;
+        $('#deliveryCheckBtn').click();
+      });
+    });
+
+    // Bulk Form
+
+
+    // Bulk Form
+    $('#bulkForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const data = Object.fromEntries(fd.entries());
+
+      try {
+        await fetch(`${API_BASE}/bulk-orders`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        showToast('Request Sent Successfully');
+        e.target.reset();
+      } catch (e) {
+        showToast('Error sending request');
+      }
+    });
+
+  </script>
+  <!-- WhatsApp Widget -->
+  <a href="https://wa.me/918217218618" target="_blank"
+    class="fixed left-6 bottom-6 z-50 bg-green-500 text-white p-4 rounded-full shadow-2xl hover:bg-green-600 transition hover:scale-110 flex items-center justify-center gap-2 group">
+    <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+      <path
+        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+    </svg>
+    <span class="font-bold hidden group-hover:block transition-all">Chat with us</span>
+  </a>
+</body>
+
+</html>

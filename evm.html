@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EVM Ballot Unit Simulator</title>
+    <style>
+        :root {
+            --evm-beige: #d8d0b8;
+            --evm-dark-beige: #c0bba6;
+            --evm-blue-btn: #2d5895;
+            --led-red-off: #4a0000;
+            --led-red-on: #ff0000;
+            --led-green-off: #003300;
+            --led-green-on: #00ff00;
+        }
+
+        body {
+            font-family: sans-serif;
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* Main Casing */
+        .evm-casing {
+            background-color: var(--evm-beige);
+            width: 380px;
+            padding: 20px;
+            border-radius: 15px;
+            border: 3px solid #999;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.2), 0 10px 20px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        /* The left side cable area hint */
+        .casing-left-edge {
+            position: absolute;
+            left: -15px;
+            top: 50px;
+            bottom: 50px;
+            width: 15px;
+            background-color: #999;
+            border-radius: 10px 0 0 10px;
+            border: 2px solid #777;
+        }
+
+        /* Header Section (Ready Light & Labels) */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #aaa;
+            padding-bottom: 10px;
+        }
+
+        .header-left, .header-right {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .ready-status {
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        /* LED lamp styling */
+        .led-lamp {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin: 0 10px;
+            border: 2px solid #555;
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.5);
+            transition: all 0.1s ease;
+        }
+
+        #ready-led {
+            background-color: var(--led-green-off);
+        }
+        #ready-led.on {
+            background-color: var(--led-green-on);
+            box-shadow: 0 0 15px var(--led-green-on), inset 2px 2px 5px rgba(255,255,255,0.5);
+        }
+
+        .unit-number-box {
+            background-color: #333;
+            color: white;
+            padding: 2px 6px;
+            border: 1px solid #000;
+        }
+
+        /* Candidate List Structure */
+        .candidate-list {
+            background-color: #fff;
+            border: 2px solid #aaa;
+        }
+
+        .candidate-row {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #ccc;
+            height: 60px;
+        }
+
+        .candidate-row.header-row {
+            background-color: #eee;
+            height: 30px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        /* Columns */
+        .col-sl { width: 40px; text-align: center; border-right: 1px solid #ccc; height: 100%; display: flex; align-items: center; justify-content: center;}
+        .col-name { flex-grow: 2; padding-left: 10px; border-right: 1px solid #ccc; height: 100%; display: flex; align-items: center;}
+        .col-symbol { width: 60px; text-align: center; font-size: 1.5em; border-right: 1px solid #ccc; height: 100%; display: flex; align-items: center; justify-content: center;}
+        .col-action { flex-grow: 1; display: flex; align-items: center; justify-content: space-around; background-color: var(--evm-beige); padding: 0 10px; height: 100%;}
+
+        /* Candidate LED */
+        .candidate-led {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background-color: var(--led-red-off);
+            border: 2px solid #555;
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .candidate-led.on {
+            background-color: var(--led-red-on);
+            box-shadow: 0 0 15px var(--led-red-on), inset 2px 2px 5px rgba(255,255,255,0.5);
+        }
+
+        /* Blue Vote Button */
+        .vote-button {
+            width: 90px;
+            height: 40px;
+            background-color: var(--evm-blue-btn);
+            border: 3px solid #1a3a65;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: inset 0 5px 10px rgba(255,255,255,0.2), 0 3px 5px rgba(0,0,0,0.4);
+            transition: transform 0.1s;
+        }
+
+        .vote-button:active {
+            transform: scale(0.97);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+        }
+        
+        /* Styling for empty/dummy rows */
+        .empty-row .col-sl, .empty-row .col-name, .empty-row .col-symbol {
+            background-color: var(--evm-beige); /* Hides the white paper area */
+            border-right: none;
+        }
+        .empty-row .vote-button {
+            background-color: var(--evm-dark-beige);
+            border-color: #999;
+            cursor: default;
+            box-shadow: none;
+        }
+         .empty-row .vote-button:active {
+             transform: none;
+         }
+
+        /* Status message area below */
+        #sim-status {
+            text-align: center;
+            color: white;
+            margin-top: 20px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+
+<div class="evm-casing">
+    <div class="casing-left-edge"></div>
+    
+    <div class="header">
+        <div class="header-left">
+            NS60205
+            <div style="font-size: 0.6em; background: #333; height: 5px; width: 50px; margin-top: 2px;"></div> </div>
+        <div class="ready-status">
+            Ready <div id="ready-led" class="led-lamp on"></div>
+        </div>
+        <div class="header-right" style="text-align: right;">
+            बैलेट यूनिट<br>
+            Ballot Unit <span class="unit-number-box">1</span>
+        </div>
+    </div>
+
+    <div class="candidate-list">
+        <div class="candidate-row header-row">
+            <div class="col-sl">Sl.No.</div>
+            <div class="col-name">NAME</div>
+            <div class="col-symbol">symbol</div>
+            <div class="col-action" style="background: transparent;"></div>
+        </div>
+
+        <div class="candidate-row">
+            <div class="col-sl">1</div>
+            <div class="col-name">candidate-1</div>
+            <div class="col-symbol">α</div>
+            <div class="col-action">
+                <div class="candidate-led" id="led-1"></div>
+                <button class="vote-button" onclick="castVote(1)"></button>
+            </div>
+        </div>
+
+        <div class="candidate-row">
+            <div class="col-sl">2</div>
+            <div class="col-name">സി.പി. രാജപ്പൻ </div>
+            <div class="col-symbol">β</div>
+            <div class="col-action">
+                <div class="candidate-led" id="led-2"></div>
+                <button class="vote-button" onclick="castVote(2)"></button>
+            </div>
+        </div>
+
+        <div class="candidate-row">
+            <div class="col-sl">3</div>
+            <div class="col-name">candidate-3</div>
+            <div class="col-symbol">γ</div>
+            <div class="col-action">
+                <div class="candidate-led" id="led-3"></div>
+                <button class="vote-button" onclick="castVote(3)"></button>
+            </div>
+        </div>
+        
+         <div class="candidate-row empty-row">
+             <div class="col-sl"></div><div class="col-name"></div><div class="col-symbol"></div>
+            <div class="col-action"><div class="candidate-led"></div><button class="vote-button"></button></div>
+        </div>
+        <div class="candidate-row empty-row">
+             <div class="col-sl"></div><div class="col-name"></div><div class="col-symbol"></div>
+            <div class="col-action"><div class="candidate-led"></div><button class="vote-button"></button></div>
+        </div>
+         <div class="candidate-row empty-row">
+             <div class="col-sl"></div><div class="col-name"></div><div class="col-symbol"></div>
+            <div class="col-action"><div class="candidate-led"></div><button class="vote-button"></button></div>
+        </div>
+
+    </div>
+</div>
+<div id="sim-status">Simulator Status: Machine Ready. Please cast a vote.</div>
+<audio id="beep-sound" src="data:audio/mpeg;base64,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+AP+JZf4A/4ll/gD/iWX+AP+JZf4A/4ll/gD/iWX+AP+JZf4A/4hl/gD/iGX+AP+IZf4A/4hl/gD/iGX+AP+IZf4A/4hl/gD/iGX+AP+IZf4A/4hl/gD/iGX+AP+HZf4A/4dl/gD/h2X+AP+HZf4A/4dl/gD/h2X+AP+HZf4A/4dl/gD/h2X+AP+HZf4A/4Zl/gD/hmX+AP+GZf4A/4Zl/gD/hmX+AP+GZf4A/4Zl/gD/hmX+AP+GZf4A/4Zl/gD/hmX+AP+FZf4A/4Vl/gD/hWX+AP+FZf4A/4Vl/gD/hWX+AP+FZf4A/4Vl/gD/hWX+AP+FZf4A/4Rl/gD/hGX+AP+EZf4A/4Rl/gD/hGX+AP+EZf4A/4Rl/gD/hGX+AP+EZf4A/4Rl/gD/hGX+AP+DZf4A/4Nl/gD/g2X+AP+DZf4A/4Nl/gD/g2X+AP+DZf4A/4Nl/gD/g2X+AP+DZf4A/4Jl/gD/gmX+AP+CZf4A/4Jl/gD/gmX+AP+CZf4A/4Jl/gD/gmX+AP+CZf4A/4Jl/gD/gmX+AP+BZf4A/4Fl/gD/gWX+AP+BZf4A/4Fl/gD/gWX+AP+BZf4A/4Fl/gD/gWX+AP+BZf4A/4Bl/gD/gGX+AP+AZf4A/4Bl/gD/gGX+AP+AZf4A/4Bl/gD/gGX+AP+AZf4A/4Bl/gD/gGX+AP9/Zf4A/39l/gD/f2X+AP9/Zf4A/39l/gD/f2X+AP9/Zf4A/39l/gD/f2X+AP9/Zf4A/35l/gD/fmX+AP9+Zf4A/35l/gD/fmX+AP9+Zf4A/35l/gD/fmX+AP9+Zf4A/35l/gD/fmX+AP99Zf4A/31l/gD/fWX+AP99Zf4A/31l/gD/fWX+AP99Zf4A/31l/gD/fWX+AP99Zf4A/3xl/gD/fGX+AP98Zf4A/3xl/gD/fGX+AP98Zf4A/3xl/gD/fGX+AP98Zf4A/3xl/gD/fGX+AP97Zf4A/3tl/gD/e2X+AP97Zf4A/3tl/gD/e2X+AP97Zf4A/3tl/gD/e2X+AP97Zf4A/3pl/gD/emX+AP96Zf4A/3pl/gD/emX+AP96Zf4A/3pl/gD/emX+AP96Zf4A/3pl/gD/emX+AP95Zf4A/3ll/gD/eWX+AP95Zf4A/3ll/gD/eWX+AP95Zf4A/3ll/gD/eWX+AP95Zf4A/3hl/gD/eGX+AP94Zf4A/3hl/gD/eGX+AP94Zf4A/3hl/gD/eGX+AP94Zf4A/3hl/gD/eGX+AP93Zf4A/3dl/gD/d2X+AP93Zf4A/3dl/gD/d2X+AP93Zf4A/3dl/gD/d2X+AP93Zf4A/3Zl/gD/dmX+AP92Zf4A/3Zl/gD/dmX+AP92Zf4A/3Zl/gD/dmX+AP92Zf4A/3Zl/gD/dmX+AP91Zf4A/3Vl/gD/dWX+AP91Zf4A/3Vl/gD/dWX+AP91Zf4A/3Vl/gD/dWX+AP91Zf4A/3Rl/gD/dGX+AP90Zf4A/3Rl/gD/dGX+AP90Zf4A/3Rl/gD/dGX+AP90Zf4A/3Rl/gD/dGX+AP9zZf4A/3Nl/gD/c2X+AP9zZf4A/3Nl/gD/c2X+AP9zZf4A/3Nl/gD/c2X+AP9zZf4A/3Jl/gD/cmX+AP9yZf4A/3Jl/gD/cmX+AP9yZf4A/3Jl/gD/cmX+AP9yZf4A/3Jl/gD/cmX+AP9xZf4A/3Fl/gD/cWX+AP9xZf4A/3Fl/gD/cWX+AP9xZf4A/3Fl/gD/cWX+AP9xZf4A/3Bl/gD/cGX+AP9wZf4A/3Bl/gD/cGX+AP9wZf4A/3Bl/gD/cGX+AP9wZf4A/3Bl/gD/cGX+AP9vZf4A/29l/gD/b2X+AP9vZf4A/29l/gD/b2X+AP9vZf4A/29l/gD/b2X+AP9vZf4A/25l/gD/bmX+AP9uZf4A/25l/gD/bmX+AP9uZf4A/25l/gD/bmX+AP9uZf4A/25l/gD/bmX+AP9tZf4A/21l/gD/bWX+AP9tZf4A/21l/gD/bWX+AP9tZf4A/21l/gD/bWX+AP9tZf4A/2xl/gD/bGX+AP9sZf4A/2xl/gD/bGX+AP9sZf4A/2xl/gD/bGX+AP9sZf4A/2xl/gD/bGX+AP9rZf4A/2tl/gD/a2X+AP9rZf4A/2tl/gD/a2X+AP9rZf4A/2tl/gD/a2X+AP9rZf4A/2pl/gD/amX+AP9qZf4A/2pl/gD/amX+AP9qZf4A/2pl/gD/amX+AP9qZf4A/2pl/gD/amX+AP9pZf4A/2ll/gD/aWX+AP9pZf4A/2ll/gD/aWX+AP9pZf4A/2ll/gD/aWX+AP9pZf4A/2hl/gD/aGX+AP9oZf4A/2hl/gD/aGX+AP9oZf4A/2hl/gD/aGX+AP9oZf4A/2hl/gD/aGX+AP9nZf4A/2dl/gD/Z2X+AP9nZf4A/2dl/gD/Z2X+AP9nZf4A/2dl/gD/Z2X+AP9nZf4A/2Zl/gD/ZmX+AP9mZf4A/2Zl/gD/ZmX+AP9mZf4A/2Zl/gD/ZmX+AP9mZf4A/2Zl/gD/ZmX+AP9lZf4A/2Vl/gD/ZWX+AP9lZf4A/2Vl/gD/ZWX+AP9lZf4A/2Vl/gD/ZWX+AP9lZf4A/2Rl/gD/ZGX+AP9kZf4A/2Rl/gD/ZGX+AP9kZf4A/2Rl/gD/ZGX+AP9kZf4A/2Rl/gD/ZGX+AP9jZf4A/2Nl/gD/Y2X+AP9jZf4A/2Nl/gD/Y2X+AP9jZf4A/2Nl/gD/Y2X+AP9jZf4A/2Jl/gD/YmX+AP9iZf4A/2Jl/gD/YmX+AP9iZf4A/2Jl/gD/YmX+AP9iZf4A/2Jl/gD/YmX+AP9hZf4A/2Fl/gD/YWX+AP9hZf4A/2Fl/gD/YWX+AP9hZf4A/2Fl/gD/YWX+AP9hZf4A/2Bl/gD/YGX+AP9gZf4A/2Bl/gD/YGX+AP9gZf4A/2Bl/gD/YGX+AP9gZf4A/2Bl/gD/YGX+AP9fZf4A/19l/gD/X2X+AP9fZf4A/19l/gD/X2X+AP9fZf4A/19l/gD/X2X+AP9fZf4A/15l/gD/XmX+AP9eZf4A/15l/gD/XmX+AP9eZf4A/15l/gD/XmX+AP9eZf4A/15l/gD/XmX+AP9dZf4A/11l/gD/XWX+AP9dZf4A/11l/gD/XWX+AP9dZf4A/11l/gD/XWX+AP9dZf4A/1xl/gD/XGX+AP9cZf4A/1xl/gD/XGX+AP9cZf4A/1xl/gD/XGX+AP9cZf4A/1xl/gD/XGX+AP9bZf4A/1tl/gD/W2X+AP9bZf4A/1tl/gD/W2X+AP9bZf4A/1tl/gD/W2X+AP9bZf4A/1pl/gD/WmX+AP9aZf4A/1pl/gD/WmX+AP9aZf4A/1pl/gD/WmX+AP9aZf4A/1pl/gD/WmX+AP9ZZf4A/1ll/gD/WWX+AP9ZZf4A/1ll/gD/WWX+AP9ZZf4A/1ll/gD/WWX+AP9ZZf4A/1hl/gD/WGX+AP9YZf4A/1hl/gD/WGX+AP9YZf4A/1hl/gD/WGX+AP9YZf4A/1hl/gD/WGX+AP9XZf4A/1dl/gD/V2X+AP9XZf4A/1dl/gD/V2X+AP9XZf4A/1dl/gD/V2X+AP9XZf4A/1Zl/gD/VmX+AP9WZf4A/1Zl/gD/VmX+AP9WZf4A/1Zl/gD/VmX+AP9WZf4A/1Zl/gD/VmX+AP9VZf4A/1Vl/gD/VWX+AP9VZf4A/1Vl/gD/VWX+AP9VZf4A/1Vl/gD/VWX+AP9VZf4A/1Rl/gD/VGX+AP9UZf4A/1Rl/gD/VGX+AP9UZf4A/1Rl/gD/VGX+AP9UZf4A/1Rl/gD/VGX+AP9TZf4A/1Nl/gD/U2X+AP9TZf4A/1Nl/gD/U2X+AP9TZf4A/1Nl/gD/U2X+AP9TZf4A/1Jl/gD/UmX+AP9SZf4A/1Jl/gD/UmX+AP9SZf4A/1Jl/gD/UmX+AP9SZf4A/1Jl/gD/UmX+AP9RZf4A/1Fl/gD/UWX+AP9RZf4A/1Fl/gD/UWX+AP9RZf4A/1Fl/gD/UWX+AP9RZf4A/1Bl/gD/UGX+AP9QZf4A/1Bl/gD/UGX+AP9QZf4A/1Bl/gD/UGX+AP9QZf4A/1Bl/gD/UGX+AP9PZf4A/09l/gD/T2X+AP9PZf4A/09l/gD/T2X+AP9PZf4A/09l/gD/T2X+AP9PZf4A/05l/gD/TmX+AP9OZf4A/05l/gD/TmX+AP9OZf4A/05l/gD/TmX+AP9OZf4A/05l/gD/TmX+AP9NZf4A/01l/gD/TWX+AP9NZf4A/01l/gD/TWX+AP9NZf4A/01l/gD/TWX+AP9NZf4A/0xl/gD/TGX+AP9MZf4A/0xl/gD/TGX+AP9MZf4A/0xl/gD/TGX+AP9MZf4A/0xl/gD/TGX+AP9LZf4A/0tl/gD/S2X+AP9LZf4A/0tl/gD/S2X+AP9LZf4A/0tl/gD/S2X+AP9LZf4A/0pl/gD/SmX+AP9KZf4A/0pl/gD/SmX+AP9KZf4A/0pl/gD/SmX+AP9KZf4A/0pl/gD/SmX+AP9JZf4A/0ll/gD/SWX+AP9JZf4A/0ll/gD/SWX+AP9JZf4A/0ll/gD/SWX+AP9JZf4A/0hl/gD/SGX+AP9IZf4A/0hl/gD/SGX+AP9IZf4A/0hl/gD/SGX+AP9IZf4A/0hl/gD/SGX+AP9HZf4A/0dl/gD/R2X+AP9HZf4A/0dl/gD/R2X+AP9HZf4A/0dl/gD/R2X+AP9HZf4A/0Zl/gD/RmX+AP9GZf4A/0Zl/gD/RmX+AP9GZf4A/0Zl/gD/RmX+AP9GZf4A/0Zl/gD/RmX+AP9FZf4A/0Vl/gD/RWX+AP9FZf4A/0Vl/gD/RWX+AP9FZf4A/0Vl/gD/RWX+AP9FZf4A/0Rl/gD/RGX+AP9EZf4A/0Rl/gD/RGX+AP9EZf4A/0Rl/gD/RGX+AP9EZf4A/0Rl/gD/RGX+AP9DZf4A/0Nl/gD/Q2X+AP9DZf4A/0Nl/gD/Q2X+AP9DZf4A/0Nl/gD/Q2X+AP9DZf4A/0Jl/gD/QmX+AP9CZf4A/0Jl/gD/QmX+AP9CZf4A/0Jl/gD/QmX+AP9CZf4A/0Jl/gD/QmX+AP9BZf4A/0Fl/gD/QWX+AP9BZf4A/0Fl/gD/QWX+AP9BZf4A/0Fl/gD/QWX+AP9"></audio>
+
+<script>
+    let isReady = true;
+
+    function castVote(candidateId) {
+        if (!isReady) return; // Prevent multiple clicks if machine is locked
+
+        // 1. Lock the machine
+        isReady = false;
+
+        // 2. Visual changes: Turn off Ready light, Turn on Candidate light
+        document.getElementById('ready-led').classList.remove('on');
+        document.getElementById('led-' + candidateId).classList.add('on');
+        
+        // Update Status
+        document.getElementById('sim-status').innerText = "Vote Cast for Candidate " + candidateId + ". Machine Locked.";
+
+        // 3. Play Audio
+        const audio = document.getElementById('beep-sound');
+        if(audio) {
+            audio.currentTime = 0;
+            audio.play();
+        }
+
+        // 4. Auto-Reset Timer (Simulates the Control Unit resetting the Ballot Unit)
+        setTimeout(() => {
+            resetMachine(candidateId);
+        }, 5000); // Machine stays locked for 5 seconds
+    }
+
+    function resetMachine(lastCandidateId) {
+        // Turn off candidate light
+        document.getElementById('led-' + lastCandidateId).classList.remove('on');
+        
+        // Turn on Ready light
+        document.getElementById('ready-led').classList.add('on');
+        
+        // Reset Text and State
+        document.getElementById('sim-status').innerText = "Simulator Status: Machine Ready. Please cast a vote.";
+        isReady = true;
+    }
+</script>
+
+</body>
+</html>

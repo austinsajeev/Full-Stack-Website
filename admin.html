@@ -1,0 +1,1162 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Eden Admin | Professional Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            900: '#064e3b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(229, 231, 235, 0.5);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 antialiased flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r border-gray-200 flex flex-col hidden md:flex z-20">
+        <div class="h-20 flex items-center px-8 border-b border-gray-100">
+            <img src="images/logo.jpg" alt="Eden Admin" class="h-8 w-auto mr-3">
+            <span class="font-bold text-lg tracking-tight">Eden<span class="text-brand-600">Admin</span></span>
+        </div>
+
+        <nav class="flex-1 px-4 py-6 space-y-1">
+            <a href="#" onclick="switchTab('dashboard')" id="nav-dashboard"
+                class="nav-item flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl bg-brand-50 text-brand-900 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
+                    </path>
+                </svg>
+                Dashboard
+            </a>
+
+            <a href="#" onclick="switchTab('orders')" id="nav-orders"
+                class="nav-item flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-gray-600 hover:bg-gray-50 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+                    </path>
+                </svg>
+                All Orders
+            </a>
+
+            <a href="#" onclick="switchTab('requests')" id="nav-requests"
+                class="nav-item flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-gray-600 hover:bg-gray-50 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                    </path>
+                </svg>
+                Bulk / Subs
+            </a>
+
+            <a href="#" onclick="switchTab('products')" id="nav-products"
+                class="nav-item flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-gray-600 hover:bg-gray-50 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4">
+                    </path>
+                </svg>
+                Products
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-gray-100 space-y-2">
+            <button onclick="loadAll()"
+                class="w-full bg-gray-900 hover:bg-black text-white py-2.5 rounded-xl text-sm font-medium transition flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                    </path>
+                </svg>
+                Refresh Data
+            </button>
+
+            <button onclick="logout()"
+                class="w-full border border-gray-200 hover:bg-red-50 hover:text-red-700 text-gray-600 py-2.5 rounded-xl text-sm font-medium transition flex items-center justify-center gap-2">
+                Log Out
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
+        <!-- Header -->
+        <header class="h-20 bg-white border-b border-gray-100 flex justify-between items-center px-8 z-10 shrink-0">
+            <div class="flex items-center gap-4">
+                <h2 class="text-xl font-bold text-gray-800" id="page-title">Dashboard Overview</h2>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <!-- Global Actions -->
+                <div class="hidden md:flex items-center gap-2">
+                    <button id="btn-notif" onclick="enableNotifications()"
+                        class="hidden flex items-center gap-2 bg-brand-50 border border-brand-200 text-brand-700 px-4 py-2 rounded-lg hover:bg-brand-100 text-sm font-medium transition animate-pulse">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
+                            </path>
+                        </svg>
+                        Enable Alerts
+                    </button>
+
+                    <button onclick="exportCSV()"
+                        class="flex items-center gap-2 bg-white border border-gray-200 text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-50 text-sm font-medium transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4">
+                            </path>
+                        </svg>
+                        Export CSV
+                    </button>
+                    <div class="h-6 w-px bg-gray-200"></div>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <div class="text-sm text-gray-500 text-right hidden sm:block">
+                        <div>Logged in as Admin</div>
+                        <div class="text-xs text-brand-600 font-medium" id="last-updated">Updated just now</div>
+                    </div>
+                    <div
+                        class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-500">
+                        A
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Scrollable Content Area -->
+        <div class="flex-1 overflow-y-auto p-4 md:p-8 space-y-8" id="content-area">
+
+            <!-- VIEW: DASHBOARD -->
+            <div id="view-dashboard" class="fade-in space-y-8">
+                <!-- Quick Stats Row (Today vs Total) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Total Revenue -->
+                    <div
+                        class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group">
+                        <div class="absolute right-0 top-0 h-full w-1 bg-brand-500"></div>
+                        <div class="text-sm font-medium text-gray-500 mb-1">Total Revenue</div>
+                        <div class="text-3xl font-bold text-gray-900" id="stat-revenue">₹0</div>
+                        <div class="text-xs text-gray-400 mt-2">All time earnings</div>
+                    </div>
+
+                    <!-- Today's Revenue -->
+                    <div
+                        class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group">
+                        <div class="absolute right-0 top-0 h-full w-1 bg-blue-500"></div>
+                        <div class="text-sm font-medium text-gray-500 mb-1">Today's Revenue</div>
+                        <div class="text-3xl font-bold text-gray-900" id="stat-today-rev">₹0</div>
+                        <div class="text-xs text-blue-600 mt-2 font-medium" id="stat-today-count">0 orders today</div>
+                    </div>
+
+                    <!-- Avg Order Value -->
+                    <div
+                        class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group">
+                        <div class="absolute right-0 top-0 h-full w-1 bg-purple-500"></div>
+                        <div class="text-sm font-medium text-gray-500 mb-1">Avg. Order Value</div>
+                        <div class="text-3xl font-bold text-gray-900" id="stat-aov">₹0</div>
+                        <div class="text-xs text-gray-400 mt-2">Per successful order</div>
+                    </div>
+
+                    <!-- Pending -->
+                    <div
+                        class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group">
+                        <div class="absolute right-0 top-0 h-full w-1 bg-yellow-500"></div>
+                        <div class="text-sm font-medium text-gray-500 mb-1">Pending Orders</div>
+                        <div class="text-3xl font-bold text-gray-900" id="stat-pending">0</div>
+                        <div class="text-xs text-yellow-600 mt-2 font-medium">Requires Action</div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Revenue Trend (Line) -->
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 col-span-2">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold text-gray-800">Revenue Trend</h3>
+                            <select id="revenueFilter" onchange="updateRevenueChart(this.value)"
+                                class="text-xs bg-gray-50 border border-gray-200 rounded-lg px-2 py-1 outline-none text-gray-600 focus:border-brand-500 transition">
+                                <option value="monthly">Monthly (This Year)</option>
+                                <option value="weekly">Weekly (Last 4 Weeks)</option>
+                                <option value="daily">Daily (Last 7 Days)</option>
+                            </select>
+                        </div>
+                        <div class="h-72">
+                            <canvas id="chartRevenue"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Payment Mix (Doughnut) -->
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">Payment Methods</h3>
+                        <div class="h-48 flex justify-center relative">
+                            <canvas id="chartPayment"></canvas>
+                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <div class="text-center">
+                                    <div class="text-xs text-gray-400">Total Transactions</div>
+                                    <div class="font-bold text-gray-800 text-lg" id="total-tx">0</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <span class="flex items-center gap-2">
+                                    <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                                    Cash on Delivery
+                                </span>
+                                <span class="font-bold" id="pay-cod">0%</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="flex items-center gap-2">
+                                    <div class="w-3 h-3 rounded-full bg-purple-500"></div>
+                                    Online Payment
+                                </span>
+                                <span class="font-bold" id="pay-online">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Row: Top Products & Top Customers -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Top Products (Bar) -->
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">Best Selling Products</h3>
+                        <div class="h-64">
+                            <canvas id="chartSales"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Top Customers Table -->
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">Top Loyal Customers</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left bg-gray-50 rounded-lg overflow-hidden">
+                                <thead class="text-xs font-semibold text-gray-500 uppercase">
+                                    <tr>
+                                        <th class="p-3">Customer</th>
+                                        <th class="p-3 text-right">Orders</th>
+                                        <th class="p-3 text-right">Spent</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="topCustomersTable" class="text-sm divide-y divide-gray-100"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: ORDERS -->
+            <div id="view-orders" class="hidden fade-in space-y-6">
+                <!-- Toolbar -->
+                <div
+                    class="flex flex-col md:flex-row gap-4 justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <div class="relative w-full md:w-96">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z">
+                                </path>
+                            </svg>
+                        </div>
+                        <input type="text" id="orderSearch" onkeyup="filterOrders()"
+                            placeholder="Search by Order ID, Name or Phone..."
+                            class="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-lg leading-5 bg-gray-50 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-1 focus:ring-brand-500 focus:border-brand-500 sm:text-sm transition">
+                    </div>
+
+                    <div class="flex gap-2">
+                        <select id="statusFilter" onchange="filterOrders()"
+                            class="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block w-full p-2.5">
+                            <option value="all">All Status</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Received">Received</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-gray-50 text-gray-500 text-xs uppercase font-semibold">
+                                <tr>
+                                    <th class="px-6 py-4">ID</th>
+                                    <th class="px-6 py-4">Date</th>
+                                    <th class="px-6 py-4">Customer</th>
+                                    <th class="px-6 py-4">Items</th>
+                                    <th class="px-6 py-4">Total</th>
+                                    <th class="px-6 py-4">Status</th>
+                                    <th class="px-6 py-4">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTable" class="divide-y divide-gray-100 text-sm">
+                                <tr>
+                                    <td colspan="7" class="p-6 text-center text-gray-400">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: REQUESTS -->
+            <div id="view-requests" class="hidden fade-in space-y-6">
+                <!-- Bulk -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+                    <div class="p-6 border-b border-gray-100">
+                        <h3 class="font-bold">Bulk Inquiries</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-gray-50 text-gray-500 text-xs uppercase font-semibold">
+                                <tr>
+                                    <th class="px-6 py-4">Date</th>
+                                    <th class="px-6 py-4">Company</th>
+                                    <th class="px-6 py-4">Details</th>
+                                    <th class="px-6 py-4">Req</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bulkTable" class="divide-y divide-gray-100 text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Subs -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="p-6 border-b border-gray-100">
+                        <h3 class="font-bold">Subscriptions</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-gray-50 text-gray-500 text-xs uppercase font-semibold">
+                                <tr>
+                                    <th class="px-6 py-4">Date</th>
+                                    <th class="px-6 py-4">Name</th>
+                                    <th class="px-6 py-4">Phone</th>
+                                    <th class="px-6 py-4">Plan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="subsTable" class="divide-y divide-gray-100 text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: PRODUCTS -->
+            <div id="view-products" class="hidden fade-in">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                        <h3 class="font-bold">Stock Management</h3>
+                        <span class="text-xs text-gray-500">Toggle switch to update availability</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-gray-50 text-gray-500 text-xs uppercase font-semibold">
+                                <tr>
+                                    <th class="px-6 py-4">Product</th>
+                                    <th class="px-6 py-4">Price</th>
+                                    <th class="px-6 py-4 text-center">Status</th>
+                                    <th class="px-6 py-4 text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsTable" class="divide-y divide-gray-100 text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Login Overlay -->
+    <div id="login-overlay" class="fixed inset-0 bg-gray-900 z-[100] flex items-center justify-center hidden">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-sm text-center">
+            <img src="images/logo.jpg" alt="Eden Admin" class="h-16 w-auto mx-auto mb-4 rounded-xl">
+            <h2 class="text-2xl font-bold text-gray-800 mb-1">Admin Login</h2>
+            <p class="text-gray-500 mb-6 text-sm">Please sign in to access the dashboard.</p>
+
+            <form onsubmit="handleLogin(event)" class="space-y-4 text-left">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Username</label>
+                    <input type="text" id="login-user"
+                        class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none transition"
+                        placeholder="admin">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Password</label>
+                    <input type="password" id="login-pass"
+                        class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none transition"
+                        placeholder="••••••••">
+                </div>
+                <div id="login-error" class="text-xs text-red-500 font-medium hidden">Invalid credentials</div>
+                <button type="submit"
+                    class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-lg transition shadow-lg shadow-brand-200">
+                    Sign In
+                </button>
+            </form>
+            <div class="mt-4 text-xs text-gray-400"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIG & STATE ---
+        const API_BASE = 'http://localhost:3000/api';
+        let ORDERS_CACHE = [];
+        let CHART_SALES = null;
+        let CHART_REVENUE = null;
+        let CHART_PAYMENT = null;
+
+        // --- AUTH LOGIC ---
+        function checkAuth() {
+            const token = localStorage.getItem('admin_token');
+            if (!token) {
+                document.getElementById('login-overlay').classList.remove('hidden');
+                document.querySelector('aside').classList.add('blur-sm');
+                document.querySelector('main').classList.add('blur-sm');
+            } else {
+                document.getElementById('login-overlay').classList.add('hidden');
+                document.querySelector('aside').classList.remove('blur-sm');
+                document.querySelector('main').classList.remove('blur-sm');
+                loadAll();
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById('login-user').value;
+            const p = document.getElementById('login-pass').value;
+            const err = document.getElementById('login-error');
+
+            try {
+                const res = await fetch(`${API_BASE}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: u, password: p })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    localStorage.setItem('admin_token', data.token);
+                    checkAuth();
+                } else {
+                    err.classList.remove('hidden');
+                }
+            } catch (e) {
+                err.innerText = 'Connection Error';
+                err.classList.remove('hidden');
+            }
+        }
+
+        function logout() {
+            if (confirm('Log out?')) {
+                localStorage.removeItem('admin_token');
+                window.location.reload();
+            }
+        }
+
+        // --- EXPORT CSV ---
+        function exportCSV() {
+            if (!ORDERS_CACHE.length) return alert('No data to export');
+            const headers = [
+                'Order ID',
+                'Date',
+                'Customer Name',
+                'Phone',
+                'Address',
+                'Items',
+                'Total Amount',
+                'Payment Method',
+                'Status'
+            ];
+
+            const rows = ORDERS_CACHE.map(o => [
+                o.id,
+                new Date(o.date).toLocaleDateString(),
+                `"${o.customer?.name || ''}"`,
+                `"${o.customer?.phone || ''}"`,
+                `"${o.customer?.address || ''}"`,
+                `"${(o.items || []).map(i => `${i.qty}x ${i.name}`).join(', ')}"`,
+                o.total,
+                o.paymentMethod,
+                o.status
+            ]);
+
+            const csvContent = "data:text/csv;charset=utf-8,"
+                + headers.join(",") + "\n"
+                + rows.map(e => e.join(",")).join("\n");
+
+            const link = document.createElement("a");
+            link.setAttribute("href", encodeURI(csvContent));
+            link.setAttribute("download", "eden_orders_export.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // --- FILTERING ---
+        function filterOrders() {
+            const query = document.getElementById('orderSearch').value.toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+
+            const filtered = ORDERS_CACHE.filter(o => {
+                const matchesSearch =
+                    o.id.toString().includes(query) ||
+                    (o.customer?.name || '').toLowerCase().includes(query) ||
+                    (o.customer?.phone || '').includes(query);
+
+                const matchesStatus = status === 'all' || o.status === status;
+                return matchesSearch && matchesStatus;
+            });
+
+            renderOrdersTable(filtered);
+        }
+
+        // --- NAVIGATION ---
+        function switchTab(tab) {
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('bg-brand-50', 'text-brand-900');
+                el.classList.add('text-gray-600', 'hover:bg-gray-50');
+            });
+
+            const activeNav = document.getElementById('nav-' + tab);
+            if (activeNav) {
+                activeNav.classList.remove('text-gray-600', 'hover:bg-gray-50');
+                activeNav.classList.add('bg-brand-50', 'text-brand-900');
+            }
+
+            ['dashboard', 'orders', 'requests', 'products'].forEach(v => {
+                const el = document.getElementById('view-' + v);
+                if (v === tab) el.classList.remove('hidden');
+                else el.classList.add('hidden');
+            });
+
+            const titles = {
+                dashboard: 'Dashboard Overview',
+                orders: 'Order Management',
+                requests: 'Bulk & Subscriptions',
+                products: 'Stock Management'
+            };
+            document.getElementById('page-title').innerText = titles[tab];
+        }
+
+        // --- DATA FETCHING ---
+        async function fetchJSON(endpoint) {
+            try {
+                const res = await fetch(`${API_BASE}${endpoint}`);
+                return await res.json();
+            } catch (e) {
+                console.error(e);
+                return [];
+            }
+        }
+
+        async function markReceived(id) {
+            if (!confirm('Mark order #' + id + ' as Received?')) return;
+            try {
+                const res = await fetch(`${API_BASE}/orders/${id}/status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: 'Received' })
+                });
+                const data = await res.json();
+                if (data.success) loadAll();
+                else alert('Failed');
+            } catch (e) {
+                alert('Error');
+            }
+        }
+
+        // --- PRINT INVOICE ---
+        function printInvoice(id) {
+            const order = ORDERS_CACHE.find(o => o.id === id);
+            if (!order) return;
+
+            const win = window.open('', '', 'width=800,height=600');
+
+            const invoiceHTML = `
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Invoice #${order.id}</title>
+    <style>
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 40px; color: #333; }
+        .header { border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 30px; }
+        .logo { font-size: 24px; font-weight: bold; color: #059669; }
+        .invoice-title { font-size: 32px; font-weight: bold; color: #ccc; text-align: right; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+        .label { font-size: 12px; font-weight: bold; color: #999; text-transform: uppercase; margin-bottom: 5px; }
+        .value { font-size: 16px; margin-bottom: 15px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        th { text-align: left; border-bottom: 2px solid #eee; padding: 10px 0; font-size: 12px; text-transform: uppercase; color: #999; }
+        td { padding: 15px 0; border-bottom: 1px solid #eee; }
+        .total { text-align: right; font-size: 24px; font-weight: bold; margin-top: 20px; }
+        .footer { margin-top: 50px; text-align: center; font-size: 12px; color: #999; border-top: 1px solid #eee; padding-top: 20px; }
+        @media print { .btn { display: none; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="logo">Eden Foods</div>
+            <div class="invoice-title">INVOICE</div>
+        </div>
+    </div>
+
+    <div class="grid">
+        <div>
+            <div class="label">Billed To</div>
+            <div class="value">
+                <strong>${order.customer?.name || ''}</strong><br>
+                ${order.customer?.phone || ''}<br>
+                ${order.customer?.address || ''}
+            </div>
+        </div>
+        <div style="text-align: right;">
+            <div class="label">Invoice Details</div>
+            <div class="value">
+                No: <strong>#${order.id}</strong><br>
+                Date: ${new Date(order.date).toLocaleDateString()}<br>
+                Status: ${order.status}
+            </div>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th style="text-align:center">Qty</th>
+                <th style="text-align:right">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${(order.items || []).map(i => `
+                <tr>
+                    <td>
+                        <strong>${i.name}</strong><br>
+                        <span style="font-size:12px; color:#666">${i.variant || ''}</span>
+                    </td>
+                    <td style="text-align:center">${i.qty}</td>
+                    <td style="text-align:right">₹${i.price * i.qty}</td>
+                </tr>
+            `).join('')}
+        </tbody>
+    </table>
+
+    <div class="total">Total: ₹${order.total}</div>
+
+    <div class="footer">
+        Thank you for ordering from Eden Foods!<br>
+        Visit us at No.21A, HMT Layout, Bengaluru - 560073
+    </div>
+
+    <script>
+        window.print();
+    <\/script>
+</body>
+</html>
+`;
+
+            win.document.open();
+            win.document.write(invoiceHTML);
+            win.document.close();
+        }
+
+        // --- DASHBOARD LOGIC ---
+        function renderDashboard(orders) {
+            const totalRev = orders.reduce((s, o) => s + (o.total || 0), 0);
+            const pending = orders.filter(o => o.status === 'Pending').length;
+            const today = new Date().toDateString();
+            const todayOrders = orders.filter(o => new Date(o.date).toDateString() === today);
+            const todayRev = todayOrders.reduce((s, o) => s + (o.total || 0), 0);
+            const aov = totalRev / (orders.length || 1);
+
+            document.getElementById('stat-revenue').innerText = '₹' + totalRev.toLocaleString();
+            document.getElementById('stat-today-rev').innerText = '₹' + todayRev.toLocaleString();
+            document.getElementById('stat-today-count').innerText = todayOrders.length + ' orders today';
+            document.getElementById('stat-aov').innerText = '₹' + Math.round(aov);
+            document.getElementById('stat-pending').innerText = pending;
+
+            const productSales = {};
+            const monthsRev = {};
+            const payCounts = { cod: 0, online: 0 };
+            const customers = {};
+
+            orders.forEach(o => {
+                // Products
+                (o.items || []).forEach(i => {
+                    productSales[i.name] = (productSales[i.name] || 0) + i.qty;
+                });
+
+                // Monthly Revenue
+                const mKey = new Date(o.date).toLocaleString('default', { month: 'short' });
+                monthsRev[mKey] = (monthsRev[mKey] || 0) + o.total;
+
+                // Payment
+                const method = (o.paymentMethod === 'online') ? 'online' : 'cod';
+                payCounts[method]++;
+
+                // Customers
+                const cName = o.customer?.name || 'Unknown';
+                if (!customers[cName]) customers[cName] = { count: 0, spent: 0 };
+                customers[cName].count++;
+                customers[cName].spent += o.total;
+            });
+
+            renderCharts(
+                Object.keys(productSales),
+                Object.values(productSales),
+                payCounts
+            );
+
+            // Initial Chart Load
+            updateRevenueChart('monthly');
+
+            const sortedCust = Object.entries(customers)
+                .sort(([, a], [, b]) => b.spent - a.spent)
+                .slice(0, 5);
+
+            document.getElementById('topCustomersTable').innerHTML = sortedCust.map(([name, data]) => `
+                <tr class="hover:bg-white group transition">
+                    <td class="p-3 font-medium text-gray-700">${name}</td>
+                    <td class="p-3 text-right text-gray-500">${data.count}</td>
+                    <td class="p-3 text-right font-bold text-gray-900">₹${data.spent.toLocaleString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        function updateRevenueChart(range) {
+            if (!ORDERS_CACHE.length) return;
+
+            const now = new Date();
+            let labels = [];
+            let data = [];
+
+            // Helper to format date
+            const formatDate = (d) => d.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+
+            if (range === 'daily') {
+                // Last 7 Days
+                for (let i = 6; i >= 0; i--) {
+                    const d = new Date();
+                    d.setDate(now.getDate() - i);
+                    const label = formatDate(d);
+                    labels.push(label);
+
+                    const dayTotal = ORDERS_CACHE
+                        .filter(o => new Date(o.date).toDateString() === d.toDateString())
+                        .reduce((sum, o) => sum + (o.total || 0), 0);
+                    data.push(dayTotal);
+                }
+
+            } else if (range === 'weekly') {
+                // Last 4 Weeks
+                for (let i = 3; i >= 0; i--) {
+                    const end = new Date();
+                    end.setDate(now.getDate() - (i * 7));
+                    const start = new Date(end);
+                    start.setDate(end.getDate() - 6);
+
+                    const label = `${formatDate(start)} - ${formatDate(end)}`;
+                    labels.push(label);
+
+                    const weekTotal = ORDERS_CACHE
+                        .filter(o => {
+                            const d = new Date(o.date);
+                            return d >= start && d <= end; // Simplified check
+                        })
+                        .reduce((sum, o) => sum + (o.total || 0), 0);
+                    data.push(weekTotal);
+                }
+
+            } else {
+                // Monthly (This Year)
+                const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                labels = monthNames;
+
+                const currentYear = now.getFullYear();
+                data = new Array(12).fill(0);
+
+                ORDERS_CACHE.forEach(o => {
+                    const d = new Date(o.date);
+                    if (d.getFullYear() === currentYear) {
+                        data[d.getMonth()] += (o.total || 0);
+                    }
+                });
+            }
+
+            // Render Chart
+            if (CHART_REVENUE) CHART_REVENUE.destroy();
+            CHART_REVENUE = new Chart(document.getElementById('chartRevenue').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Revenue (₹)',
+                        data: data,
+                        borderColor: '#059669',
+                        backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#059669',
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return 'Revenue: ₹' + context.raw.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { borderDash: [2, 4] }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderCharts(prodLabels, prodData, payCounts) {
+            if (CHART_SALES) CHART_SALES.destroy();
+            if (CHART_PAYMENT) CHART_PAYMENT.destroy();
+
+
+            // Product Sales (Bar)
+            CHART_SALES = new Chart(document.getElementById('chartSales').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: prodLabels,
+                    datasets: [{
+                        label: 'Units',
+                        data: prodData,
+                        backgroundColor: '#10b981',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+
+            // Revenue Trend (Line) - MOVED TO updateRevenueChart()
+
+            // Payment Mix (Doughnut)
+            const totalPay = payCounts.cod + payCounts.online;
+            document.getElementById('total-tx').textContent = totalPay;
+            document.getElementById('pay-cod').textContent =
+                Math.round((payCounts.cod / totalPay) * 100 || 0) + '%';
+            document.getElementById('pay-online').textContent =
+                Math.round((payCounts.online / totalPay) * 100 || 0) + '%';
+
+            CHART_PAYMENT = new Chart(document.getElementById('chartPayment').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['COD', 'Online'],
+                    datasets: [{
+                        data: [payCounts.cod, payCounts.online],
+                        backgroundColor: ['#3b82f6', '#a855f7'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '75%',
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        // --- TABLE RENDERS ---
+        function renderOrdersTable(orders) {
+            document.getElementById('ordersTable').innerHTML =
+                orders.map(o => `
+                    <tr class="hover:bg-gray-50 border-b border-gray-100 last:border-0 relative group">
+                        <td class="px-6 py-4 font-mono text-xs text-gray-500">#${o.id}</td>
+                        <td class="px-6 py-4 text-gray-500">${new Date(o.date).toLocaleDateString()}</td>
+                        <td class="px-6 py-4">
+                            <div class="font-medium text-gray-900">${o.customer?.name || ''}</div>
+                            <div class="text-xs text-gray-500">${o.customer?.phone || ''}</div>
+                            <div class="text-xs text-gray-400 truncate w-32">${o.customer?.address || ''}</div>
+                        </td>
+                        <td class="px-6 py-4 text-xs text-gray-600">
+                            ${(o.items || []).map(i => `
+                                <div>
+                                    <b>${i.qty}x</b> ${i.name}
+                                    <span class="text-xs text-gray-400">(${i.variant || ''})</span>
+                                </div>
+                            `).join('')}
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="text-gray-900 font-medium">₹${o.total}</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span
+                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${o.status === 'Pending'
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : 'bg-green-100 text-green-800'
+                    }">
+                                <span class="w-1.5 h-1.5 rounded-full ${o.status === 'Pending' ? 'bg-yellow-500' : 'bg-green-500'
+                    }"></span>
+                                ${o.status}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 flex items-center gap-2">
+                            ${o.status === 'Pending'
+                        ? `<button onclick="markReceived(${o.id})"
+                                              class="text-xs text-brand-600 font-bold hover:underline">
+                                           Mark Delivered
+                                       </button>`
+                        : '<span class="text-xs text-gray-400">Locked</span>'
+                    }
+                            <button onclick="printInvoice(${o.id})"
+                                    class="p-1 text-gray-400 hover:text-gray-800 transition"
+                                    title="Print Invoice">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
+                                    </path>
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('') ||
+                `<tr>
+                    <td colspan="7" class="p-8 text-center text-gray-400">No matching orders</td>
+                </tr>`;
+        }
+
+        function renderBulk(bulk) {
+            document.getElementById('bulkTable').innerHTML =
+                bulk.map(r => `
+                    <tr class="hover:bg-gray-50 border-b border-gray-100">
+                        <td class="px-6 py-4 text-gray-500">${new Date(r.date).toLocaleDateString()}</td>
+                        <td class="px-6 py-4 font-medium text-gray-900">${r.company}</td>
+                        <td class="px-6 py-4 text-sm text-gray-600">
+                            <div>${r.contactPerson}</div>
+                            <div class="text-xs">${r.phone}</div>
+                        </td>
+                        <td class="px-6 py-4 text-gray-500 italic text-sm">"${r.message}"</td>
+                    </tr>
+                `).join('') ||
+                `<tr>
+                    <td colspan="4" class="p-8 text-center text-gray-400">No requests</td>
+                </tr>`;
+        }
+
+        function renderSubs(subs) {
+            document.getElementById('subsTable').innerHTML =
+                subs.map(s => `
+                    <tr class="hover:bg-gray-50 border-b border-gray-100">
+                        <td class="px-6 py-4 text-gray-500">${new Date(s.date).toLocaleDateString()}</td>
+                        <td class="px-6 py-4 font-medium text-gray-900">${s.name}</td>
+                        <td class="px-6 py-4 text-sm text-gray-600">${s.phone}</td>
+                        <td class="px-6 py-4">
+                            <span class="bg-blue-50 text-blue-700 px-2 py-1 rounded text-xs font-bold">${s.plan}</span>
+                        </td>
+                    </tr>
+                `).join('') ||
+                `<tr>
+                    <td colspan="4" class="p-8 text-center text-gray-400">No subscriptions</td>
+                </tr>`;
+        }
+
+        // --- NOTIFICATIONS ---
+        // --- NOTIFICATIONS ---
+        function notify(msg) {
+            // Unobtrusive in-app toast (always works)
+            const toast = document.createElement('div');
+            toast.className =
+                'fixed top-4 right-4 bg-gray-900 text-white px-6 py-4 rounded-xl shadow-2xl z-50 animate-bounce cursor-pointer';
+            toast.innerText = '🔔 ' + msg;
+            toast.onclick = () => toast.remove();
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+
+            // Audio (often requires user interaction first, but we try)
+            const audio = new Audio('https://codeskulptor-demos.commondatastorage.googleapis.com/pang/pop.mp3');
+            audio.play().catch(e => console.log('Audio blocked (needs interaction)'));
+
+            // Native Notification (only if already granted)
+            if (Notification.permission === "granted") {
+                new Notification("Eden Admin", { body: msg });
+            }
+        }
+
+        function enableNotifications() {
+            if (!('Notification' in window)) {
+                alert('This browser does not support desktop notifications');
+                return;
+            }
+
+            if (Notification.permission === 'granted') {
+                notify('Notifications are already enabled!');
+            } else {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        notify('Notifications enabled successfully!');
+                        document.getElementById('btn-notif').classList.add('hidden');
+                    } else {
+                        alert('Permission denied. You may need to reset permissions in browser settings.');
+                    }
+                });
+            }
+        }
+
+        // --- PRODUCTS LOGIC ---
+        function renderProductsTable(products) {
+            document.getElementById('productsTable').innerHTML =
+                products.map(p => `
+                    <tr class="hover:bg-gray-50 border-b border-gray-100">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <img src="${p.image || 'https://placehold.co/40?text=P'}"
+                                     class="w-10 h-10 rounded-lg object-cover bg-gray-100">
+                                <div>
+                                    <div class="font-medium text-gray-900">${p.name}</div>
+                                    <div class="text-xs text-gray-500">${(p.variants || []).length} variants</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-gray-600">Starting from ₹${p.price}</td>
+                        <td class="px-6 py-4 text-center">
+                            <span
+                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${p.inStock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    }">
+                                <span class="w-1.5 h-1.5 rounded-full ${p.inStock ? 'bg-green-500' : 'bg-red-500'
+                    }"></span>
+                                ${p.inStock ? 'In Stock' : 'Out of Stock'}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-center">
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox"
+                                       onchange="toggleStock(${p.id}, this.checked)"
+                                       class="sr-only peer"
+                                       ${p.inStock ? 'checked' : ''}>
+                                <div
+                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-500
+                                           rounded-full peer-checked:bg-brand-600 relative
+                                           after:content-[''] after:absolute after:top-[2px] after:left-[2px]
+                                           after:bg-white after:border-gray-300 after:border after:rounded-full
+                                           after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full">
+                                </div>
+                            </label>
+                        </td>
+                    </tr>
+                `).join('');
+        }
+
+        async function toggleStock(id, status) {
+            try {
+                const res = await fetch(`${API_BASE}/products/${id}/stock`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ inStock: status })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    notify(`Product #${id} is now ${status ? 'In Stock' : 'Out of Stock'}`);
+                    loadAll(true); // silent refresh
+                } else {
+                    notify('Failed to update stock');
+                }
+            } catch (e) {
+                notify('Error updating stock');
+            }
+        }
+
+        async function loadAll(silent = false) {
+            if (!silent) document.getElementById('last-updated').innerText = 'Updating...';
+
+            const prevCount = ORDERS_CACHE.length;
+            const latestId = ORDERS_CACHE.length ? ORDERS_CACHE[0].id : 0;
+
+            const [orders, bulk, subs, products] = await Promise.all([
+                fetchJSON('/orders').then(r => r.reverse()),
+                fetchJSON('/bulk-orders').then(r => r.reverse()),
+                fetchJSON('/subscribe').then(r => r.reverse()),
+                fetchJSON('/products')
+            ]);
+
+            if (prevCount > 0 && orders.length > prevCount) {
+                const newest = orders[0];
+                if (newest.id > latestId) {
+                    notify(`New Order #${newest.id} received!`);
+                }
+            }
+
+            ORDERS_CACHE = orders;
+
+            renderDashboard(orders);
+            renderOrdersTable(orders);
+            renderBulk(bulk);
+            renderSubs(subs);
+            renderProductsTable(products);
+
+            document.getElementById('last-updated').innerText =
+                'Updated ' + new Date().toLocaleTimeString();
+
+            // Check if we should show the notification button
+            if (Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+                const btn = document.getElementById('btn-notif');
+                if (btn) btn.classList.remove('hidden');
+            }
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+
+            // Auto-refresh logic
+            setInterval(() => {
+                if (localStorage.getItem('admin_token')) loadAll(true);
+            }, 15000);
+        });
+    </script>
+</body>
+
+</html>

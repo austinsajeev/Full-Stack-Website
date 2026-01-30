@@ -1,0 +1,146 @@
+[
+  {
+    "id": 1,
+    "name": "Semi-Cooked Chapatti Pack",
+    "price": 60,
+    "desc": "Semi-cooked wheat chapattis (heat on tawa)",
+    "variants": [
+      {
+        "name": "6 pcs",
+        "price": 60
+      },
+      {
+        "name": "12 pcs",
+        "price": 110
+      }
+    ],
+    "image": "images/CHAPATTI.png",
+    "inStock": true
+  },
+  {
+    "id": 2,
+    "name": "Semi-Cooked Poori Pack",
+    "price": 70,
+    "desc": "Semi-cooked pooris — puff fresh at home ",
+    "variants": [
+      {
+        "name": "8 pcs",
+        "price": 70
+      },
+      {
+        "name": "16 pcs",
+        "price": 130
+      }
+    ],
+    "image": "images/POORI.PNG",
+    "inStock": true
+  },
+  {
+    "id": 3,
+    "name": "Semi-Cooked Parotta Pack",
+    "price": 80,
+    "desc": "Layered semi-cooked parottas — just pan-heat ",
+    "variants": [
+      {
+        "name": "4 pcs",
+        "price": 80
+      },
+      {
+        "name": "8 pcs",
+        "price": 150
+      }
+    ],
+    "image": "images/PAROTTA.png",
+    "inStock": true
+  },
+  {
+    "id": 4,
+    "name": "Semi-Cooked Wheat Parotta Pack",
+    "price": 90,
+    "desc": "Healthier wheat parottas, semi-cooked ",
+    "variants": [
+      {
+        "name": "4 pcs",
+        "price": 90
+      },
+      {
+        "name": "8 pcs",
+        "price": 170
+      }
+    ],
+    "image": "images/WHEAT POROTTA.png",
+    "inStock": true
+  },
+  {
+    "id": 5,
+    "name": "Idli/Dosa Semi-Fermented Batter",
+    "price": 65,
+    "desc": "Ready-to-use batter, keep refrigerated",
+    "variants": [
+      {
+        "name": "500g",
+        "price": 65
+      },
+      {
+        "name": "1kg",
+        "price": 120
+      }
+    ],
+    "image": "images/BATTER.jpeg",
+    "inStock": true
+  },
+  {
+    "id": 6,
+    "name": "Palappam Ready Mix",
+    "price": 80,
+    "desc": "Palappam mix — just add water and ferment",
+    "variants": [
+      {
+        "name": "250g",
+        "price": 80
+      },
+      {
+        "name": "500g",
+        "price": 150
+      }
+    ],
+    "image": "images/APPAM.png",
+    "inStock": true
+  },
+  {
+    "id": 7,
+    "name": "Home-Style Mango Pickle",
+    "price": 90,
+    "desc": "Traditional mango pickle to pair with your breads",
+    "variants": [
+      {
+        "name": "200g",
+        "price": 90
+      },
+      {
+        "name": "500g",
+        "price": 200
+      }
+    ],
+    "image": "images/MANGO PICKLE.jpeg",
+    "inStock": true
+  },
+  {
+    "id": 8,
+    "name": "Home-Style Lemon Pickle",
+    "price": 80,
+    "desc": "Tangy lemon pickle — perfect side for chapatti & parotta",
+    "variants": [
+      {
+        "name": "200g",
+        "price": 80
+      },
+      {
+        "name": "500g",
+        "price": 180
+      }
+    ],
+    "image": "images/LEMON PICKLE.jpeg",
+    "inStock": true
+  }
+]
