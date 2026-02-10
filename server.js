@@ -14,6 +14,11 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('.'));
 
+// Serve web.html on root
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'web.html'));
+});
+
 // --- MONGODB CONNECTION ---
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
