@@ -181,9 +181,9 @@
                     <div
                         class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group">
                         <div class="absolute right-0 top-0 h-full w-1 bg-purple-500"></div>
-                        <div class="text-sm font-medium text-gray-500 mb-1">Avg. Order Value</div>
-                        <div class="text-3xl font-bold text-gray-900" id="stat-aov">₹0</div>
-                        <div class="text-xs text-gray-400 mt-2">Per successful order</div>
+                        <div class="text-sm font-medium text-gray-500 mb-1">Delivered Orders</div>
+                        <div class="text-3xl font-bold text-gray-900" id="stat-delivered">0</div>
+                        <div class="text-xs text-gray-400 mt-2">Successfully delivered</div>
                     </div>
 
                     <!-- Pending -->
@@ -696,12 +696,12 @@
             const today = new Date().toDateString();
             const todayOrders = orders.filter(o => new Date(o.date).toDateString() === today);
             const todayRev = todayOrders.reduce((s, o) => s + (o.total || 0), 0);
-            const aov = totalRev / (orders.length || 1);
+            const delivered = orders.filter(o => o.status === 'Received').length;
 
             document.getElementById('stat-revenue').innerText = '₹' + totalRev.toLocaleString();
             document.getElementById('stat-today-rev').innerText = '₹' + todayRev.toLocaleString();
             document.getElementById('stat-today-count').innerText = todayOrders.length + ' orders today';
-            document.getElementById('stat-aov').innerText = '₹' + Math.round(aov);
+            document.getElementById('stat-delivered').innerText = delivered;
             document.getElementById('stat-pending').innerText = pending;
 
             const productSales = {};

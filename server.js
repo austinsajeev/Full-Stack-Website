@@ -1,120 +1,215 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const fs = require('fs');
 const path = require('path');
+const mongoose = require('mongoose');
+const fs = require('fs'); // Kept for initial seeding only
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static('.')); // Serve static files from current directory
+app.use(express.static('.'));
 
-// Helper to read/write JSON
-const DATA_DIR = path.join(__dirname, 'data');
-const readJson = (file) => {
+// --- MONGODB CONNECTION ---
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => {
+        console.log('Connected to MongoDB Atlas');
+        seedProducts(); // Identify if we need to seed
+    })
+    .catch(err => console.error('MongoDB Connection Error:', err));
+
+// --- SCHEMAS & MODELS ---
+const ProductSchema = new mongoose.Schema({
+    id: Number,
+    name: String,
+    price: Number,
+    desc: String,
+    inStock: Boolean,
+    image: String,
+    variants: [{
+        name: String,
+        price: Number
+    }]
+});
+const Product = mongoose.model('Product', ProductSchema);
+
+const OrderSchema = new mongoose.Schema({
+    id: Number, // Using timestamp as ID for compatibility
+    date: String,
+    status: String,
+    customer: Object,
+    items: Array,
+    total: Number,
+    paymentMethod: String,
+    eta: Number
+});
+const Order = mongoose.model('Order', OrderSchema);
+
+const BulkOrderSchema = new mongoose.Schema({
+    id: Number,
+    date: String,
+    company: String,
+    contactPerson: String,
+    phone: String,
+    message: String
+});
+const BulkOrder = mongoose.model('BulkOrder', BulkOrderSchema);
+
+const SubscriptionSchema = new mongoose.Schema({
+    id: Number,
+    date: String,
+    name: String,
+    phone: String,
+    plan: String
+});
+const Subscription = mongoose.model('Subscription', SubscriptionSchema);
+
+// --- SEEDING HELPER ---
+async function seedProducts() {
     try {
-        const data = fs.readFileSync(path.join(DATA_DIR, file), 'utf8');
-        return JSON.parse(data);
+        const count = await Product.countDocuments();
+        if (count === 0) {
+            const dataPath = path.join(__dirname, 'data', 'products.json');
+            if (fs.existsSync(dataPath)) {
+                const raw = fs.readFileSync(dataPath, 'utf8');
+                const products = JSON.parse(raw);
+                await Product.insertMany(products);
+                console.log('Database seeded with initial products');
+            }
+        }
     } catch (e) {
-        return [];
+        console.error('Seeding error:', e);
     }
-};
-const writeJson = (file, data) => {
-    fs.writeFileSync(path.join(DATA_DIR, file), JSON.stringify(data, null, 2));
-};
+}
 
-// --- Endpoints ---
+// --- ENDPOINTS ---
 
 // Get Products
-app.get('/api/products', (req, res) => {
-    const products = readJson('products.json');
-    res.json(products);
+app.get('/api/products', async (req, res) => {
+    try {
+        const products = await Product.find({});
+        res.json(products);
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Update Product Stock
+app.put('/api/products/:id/stock', async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        const { inStock } = req.body;
+        const product = await Product.findOneAndUpdate({ id }, { inStock }, { new: true });
+        if (product) {
+            res.json({ success: true, product });
+        } else {
+            res.status(404).json({ success: false, msg: 'Product not found' });
+        }
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
 });
 
 // Place Order
-app.post('/api/orders', (req, res) => {
-    const order = req.body;
-    order.id = Date.now();
-    order.date = new Date().toISOString();
-    order.status = 'Pending';
+app.post('/api/orders', async (req, res) => {
+    try {
+        const orderData = req.body;
+        orderData.id = Date.now();
+        orderData.date = new Date().toISOString();
+        orderData.status = 'Pending';
 
-    const orders = readJson('orders.json');
-    orders.push(order);
-    writeJson('orders.json', orders);
-
-    console.log('New Order:', order);
-    res.json({ success: true, orderId: order.id });
+        const newOrder = await Order.create(orderData);
+        console.log('New Order:', newOrder.id);
+        res.json({ success: true, orderId: newOrder.id });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
 });
-app.get('/api/orders', (req, res) => {
-    const orders = readJson('orders.json');
-    res.json(orders);
+
+// Get Orders
+app.get('/api/orders', async (req, res) => {
+    try {
+        const orders = await Order.find({});
+        res.json(orders);
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
 });
 
 // Update Order Status
-app.put('/api/orders/:id/status', (req, res) => {
-    const { id } = req.params;
-    const { status, eta } = req.body;
+app.put('/api/orders/:id/status', async (req, res) => {
+    try {
+        const id = parseInt(req.params.id); // Our IDs are numbers
+        const { status, eta } = req.body;
+        const update = { status };
+        if (eta) update.eta = eta;
 
-    const orders = readJson('orders.json');
-    const orderIndex = orders.findIndex(o => o.id == id);
+        const order = await Order.findOneAndUpdate({ id }, update, { new: true });
 
-    if (orderIndex > -1) {
-        orders[orderIndex].status = status;
-        if (eta) orders[orderIndex].eta = eta; // Update ETA if provided
-        writeJson('orders.json', orders);
-        res.json({ success: true });
-    } else {
-        res.status(404).json({ success: false, msg: 'Order not found' });
+        if (order) {
+            res.json({ success: true });
+        } else {
+            res.status(404).json({ success: false, msg: 'Order not found' });
+        }
+    } catch (e) {
+        res.status(500).json({ error: e.message });
     }
 });
 
 // Bulk Order Request
-app.post('/api/bulk-orders', (req, res) => {
-    const request = req.body;
-    request.id = Date.now();
-    request.date = new Date().toISOString();
-
-    const bulkOrders = readJson('bulk_orders.json');
-    bulkOrders.push(request);
-    writeJson('bulk_orders.json', bulkOrders);
-
-    res.json({ success: true });
+app.post('/api/bulk-orders', async (req, res) => {
+    try {
+        const data = req.body;
+        data.id = Date.now();
+        data.date = new Date().toISOString();
+        await BulkOrder.create(data);
+        res.json({ success: true });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
 });
 
-// Get Bulk Orders (for Admin)
-app.get('/api/bulk-orders', (req, res) => {
-    const bulkOrders = readJson('bulk_orders.json');
-    res.json(bulkOrders);
+// Get Bulk Orders
+app.get('/api/bulk-orders', async (req, res) => {
+    try {
+        const items = await BulkOrder.find({});
+        res.json(items);
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
 });
 
 // Subscribe
-app.post('/api/subscribe', (req, res) => {
-    const sub = req.body;
-    sub.id = Date.now();
-    sub.date = new Date().toISOString();
-
-    const subscriptions = readJson('subscriptions.json');
-    subscriptions.push(sub);
-    writeJson('subscriptions.json', subscriptions);
-
-    res.json({ success: true });
+app.post('/api/subscribe', async (req, res) => {
+    try {
+        const data = req.body;
+        data.id = Date.now();
+        data.date = new Date().toISOString();
+        await Subscription.create(data);
+        res.json({ success: true });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
 });
 
-// Get Subscriptions (for Admin)
-app.get('/api/subscribe', (req, res) => {
-    const subscriptions = readJson('subscriptions.json');
-    res.json(subscriptions);
+// Get Subscriptions
+app.get('/api/subscribe', async (req, res) => {
+    try {
+        const items = await Subscription.find({});
+        res.json(items);
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
 });
 
-// Delivery Check
-// Shop Coordinates (HMT Layout, Bengaluru)
+// Delivery Check (Logic remains same)
 const SHOP_COORDS = { lat: 13.0404, lon: 77.4978 };
-
 function calculateDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Radius of the earth in km
+    const R = 6371;
     const dLat = deg2rad(lat2 - lat1);
     const dLon = deg2rad(lon2 - lon1);
     const a =
@@ -122,12 +217,9 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
         Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
         Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c; // Distance in km
+    return R * c;
 }
-
-function deg2rad(deg) {
-    return deg * (Math.PI / 180);
-}
+function deg2rad(deg) { return deg * (Math.PI / 180); }
 
 app.post('/api/delivery-check', async (req, res) => {
     const { location } = req.body;
@@ -135,34 +227,22 @@ app.post('/api/delivery-check', async (req, res) => {
 
     try {
         let query = '';
-        // Check if input is a 6-digit Pincode
         if (/^\d{6}$/.test(location.trim())) {
             query = location.trim() + ', India';
         } else {
-            // Assume it's an area name in Karnataka
             query = location + ', Karnataka, India';
         }
 
-        // Geocoding via Nominatim (OpenStreetMap)
         const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
-
-        console.log(`Checking Delivery for: ${query}`); // Debug log
-
-        const response = await fetch(url, {
-            headers: { 'User-Agent': 'EdenFoods-DeliveryCheck/1.0' }
-        });
+        const response = await fetch(url, { headers: { 'User-Agent': 'EdenFoods-DeliveryCheck/1.0' } });
         const data = await response.json();
 
         if (data && data.length > 0) {
             const dest = data[0];
             const dist = calculateDistance(SHOP_COORDS.lat, SHOP_COORDS.lon, parseFloat(dest.lat), parseFloat(dest.lon));
             const distKm = Math.round(dist);
-
-            // Limit: 50km
             const isServiceable = distKm <= 50;
             const eta = 20 + Math.round(distKm * 2.5);
-
-            console.log(`Result: ${distKm}km, Serviceable: ${isServiceable}`);
 
             res.json({
                 serviceable: isServiceable,
@@ -170,7 +250,6 @@ app.post('/api/delivery-check', async (req, res) => {
                 eta: isServiceable ? eta : null
             });
         } else {
-            console.log('Location not found in API');
             res.json({ serviceable: false, msg: 'Location not found. Try Pincode.', distanceKm: 0 });
         }
     } catch (e) {
@@ -179,31 +258,9 @@ app.post('/api/delivery-check', async (req, res) => {
     }
 });
 
-// --- PRODUCTS & STOCK ---
-app.get('/api/products', (req, res) => {
-    const products = readJson('products.json');
-    res.json(products || []);
-});
-
-app.put('/api/products/:id/stock', (req, res) => {
-    const id = parseInt(req.params.id);
-    const { inStock } = req.body;
-
-    const products = readJson('products.json');
-    const product = products.find(p => p.id === id);
-    if (product) {
-        product.inStock = inStock;
-        writeJson('products.json', products);
-        res.json({ success: true, product });
-    } else {
-        res.status(404).json({ success: false, msg: 'Product not found' });
-    }
-});
-
 // Login (Simple Auth)
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
-    // Simple hardcoded check
     if (username === 'admin' && password === 'admin123') {
         res.json({ success: true, token: 'simple-admin-token-' + Date.now() });
     } else {
