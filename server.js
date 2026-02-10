@@ -19,6 +19,11 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'web.html'));
 });
 
+// Serve admin.html on /admin
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
 // --- MONGODB CONNECTION ---
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
