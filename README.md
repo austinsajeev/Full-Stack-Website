@@ -52,12 +52,11 @@ A comprehensive full-stack e-commerce solution designed for a local food busines
     ```bash
     npm start
     ```
-    The server will start on `http://localhost:3000`.
+   
 
 ## 🖥️ Usage
 
-1.  **Open the Website**:
-    Go to `http://localhost:3000/web.html` to view the customer store.
+.
 
 2.  **Access Admin Panel**:
     Go to `http://localhost:3000/admin.html`
