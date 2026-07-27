@@ -59,7 +59,7 @@ A comprehensive full-stack e-commerce solution designed for a local food busines
 .
 
 2.  **Access Admin Panel**:
-    Go to `http://localhost:3000/admin.html`
+
     *   **Default Username**: `admin`
     *   **Default Password**: `admin123`
 
